@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  
+  --color-background: hsl(210 25% 99%);
+  --color-foreground: hsl(210 30% 12%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(210 30% 12%);
+  --color-primary: hsl(158 55% 36%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(210 20% 96%);
+  --color-secondary-foreground: hsl(210 25% 20%);
+  --color-muted: hsl(210 15% 95%);
+  --color-muted-foreground: hsl(210 15% 42%);
+  --color-accent: hsl(158 55% 40%);
+  --color-accent-foreground: hsl(0 0% 100%);
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-success: hsl(158 60% 38%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-border: hsl(210 20% 90%);
+  --color-input: hsl(210 20% 90%);
+  --color-ring: hsl(158 55% 36%);
+}
+
+:root {
+  --background: 210 25% 99%;
+  --foreground: 210 30% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 210 30% 12%;
+  --primary: 158 55% 36%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 20% 96%;
+  --secondary-foreground: 210 25% 20%;
+  --muted: 210 15% 95%;
+  --muted-foreground: 210 15% 42%;
+  --accent: 158 55% 40%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 158 60% 38%;
+  --success-foreground: 0 0% 100%;
+  --border: 210 20% 90%;
+  --radius: 0.75rem;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gradient-hero {
+  background: linear-gradient(160deg, #123D32, #18794E 45%, #0F766E);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, #18794E, #0F766E);
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.94;
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

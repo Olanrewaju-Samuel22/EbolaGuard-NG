@@ -1,0 +1,1292 @@
+# EBOLAGUARD NG
+## COMPLETE MASTER BUILD PROMPT FOR GOOGLE AI STUDIO
+
+Build a complete, production-ready, AI-powered Nigerian public health website called **EbolaGuard NG**.
+
+**Tagline:** Verified Information. Early Awareness. Safer Communities.
+
+**Official developer credit:** Developed by OLANREWAJU SAMUEL
+
+**Reference website:** http://lassaguardai.vercel.app/
+
+Study the reference website and use it as inspiration for the visual design, page structure, navigation, cards, colours, typography, and user experience. Create a unique Ebola-focused brand rather than copying the reference website exactly.
+
+The goal is to create a trustworthy Nigerian public health platform that provides verified Ebola information, current outbreak updates, prevention guidance, an AI health assistant, and an AI virtual doctor for people who have difficulty accessing healthcare.
+
+This must be a real, working web application with a connected backend, persistent database, authentication, secure administrative tools, and functional user interfaces.
+
+Do not build only a static landing page. Do not use fake authentication, simulated database saves, hardcoded outbreak statistics, or nonfunctional buttons.
+
+Preserve the project's architecture and working features when making future updates.
+
+---
+
+# 1. TECHNOLOGY STACK
+
+Use the following technologies:
+
+- Frontend: React and TypeScript.
+- Styling: Tailwind CSS.
+- Backend: Supabase.
+- Database: Supabase PostgreSQL.
+- Authentication: Supabase Auth.
+- File storage: Supabase Storage.
+- Server-side operations: Supabase Edge Functions.
+- AI services: Gemini API through secure server-side functions.
+- Charts: Recharts.
+- Icons: Lucide React.
+- Deployment: Vercel-compatible configuration.
+- Validation: Zod or an equivalent schema validation library.
+
+Use current supported versions of the required packages.
+
+Supabase must be the only primary backend. Do not use Firebase.
+
+Use proper component architecture, reusable components, typed database models, environment variables, error handling, and maintainable source code.
+
+If the project already exists, inspect the existing files before modifying them. Preserve working functionality and avoid unnecessary rewrites.
+
+---
+
+# 2. BRAND IDENTITY AND VISUAL DESIGN
+
+Create a professional, modern, trustworthy public health design inspired by the supplied LassaGuard AI reference.
+
+### Brand colours
+
+- Deep forest green: #123D32
+- Primary green: #18794E
+- Medical teal: #0F766E
+- White: #FFFFFF
+- Soft background: #F5F8F6
+- Alert amber: #F59E0B
+- Emergency red: #C62828
+- Main text: #1F2937
+
+Use green and white as the main brand colours. Use amber for cautions and red for urgent warnings.
+
+### Design requirements
+
+- Responsive layouts for phones, tablets, laptops, and desktops.
+- Professional typography and readable font sizes.
+- Clear navigation and strong visual hierarchy.
+- Modern information cards and dashboards.
+- Accessible forms and buttons.
+- Appropriate public health illustrations.
+- Subtle animations.
+- Fast page loading.
+- Mobile-first layouts.
+- Clear loading, error, empty, and success states.
+- Accessible colour contrast and keyboard navigation.
+- A consistent design system across every page.
+
+Avoid excessive glassmorphism, distracting animations, sensational disease imagery, unnecessary gradients, and generic AI-generated website styling.
+
+Create a distinct visual identity for EbolaGuard NG.
+
+---
+
+# 3. WEBSITE NAVIGATION
+
+Create a working navigation menu with these links:
+
+1. Home
+2. About Ebola
+3. Symptoms and Exposure
+4. Prevention
+5. Outbreak Updates
+6. Statistics Dashboard
+7. AI Health Assistant
+8. Virtual Doctor
+9. Emergency Help
+10. Awareness Resources
+11. About Us
+
+Include a prominent "Get Health Guidance" button.
+
+The mobile navigation must work correctly.
+
+Every link must open a real page or section.
+
+Create a professional footer containing official health resources, privacy policy, terms of use, contact information where verified, and the developer credit.
+
+Display this exact credit:
+
+**Developed by OLANREWAJU SAMUEL**
+
+Include it in the website footer, About Us page, and appropriate application information areas. Keep the credit visible but unobtrusive.
+
+Do not invent developer qualifications or company affiliations.
+
+---
+
+# 4. HOMEPAGE
+
+Build a complete homepage with the following sections.
+
+## A. Official outbreak alert
+
+Display a prominent but calm public health announcement banner.
+
+Show:
+
+- Latest verified official announcement.
+- Short summary.
+- Relevant location.
+- Original publication date.
+- Last verification date.
+- Official source link.
+- Button to read the full update.
+
+Allow authorised administrators to update this banner through the admin dashboard.
+
+If live information is unavailable, show the latest stored verified information and its date. Clearly state when live updates are temporarily unavailable.
+
+Never invent outbreak statuses or claim that information is live when it is not.
+
+## B. Hero section
+
+Headline:
+
+"Know the Facts. Recognise the Signs. Protect Your Community."
+
+Supporting text:
+
+"Access reliable Ebola information, understand possible symptoms, learn prevention measures, and get health guidance from trusted sources."
+
+Primary button: "Learn About Ebola"
+
+Secondary button: "View Official Updates"
+
+Third button: "Talk to Virtual Doctor"
+
+Use a professional, relevant public health illustration.
+
+## C. Essential information cards
+
+Create four interactive cards:
+
+- Understand Ebola.
+- Recognise the Symptoms.
+- Learn Prevention Measures.
+- Find Official Health Guidance.
+
+Each card must link to its corresponding page.
+
+## D. Current outbreak dashboard
+
+Display official data where available:
+
+- Confirmed cases.
+- Reported deaths.
+- Affected countries or regions.
+- Nigeria-specific updates.
+- Reporting period.
+- Latest official publication date.
+- Source attribution.
+
+Every statistic must come from verified data stored in Supabase.
+
+Distinguish confirmed cases, suspected cases, new cases, and cumulative totals.
+
+Never display missing values as zero.
+
+Use "No verified figure available" when reliable data cannot be obtained.
+
+Do not combine figures from different reporting periods, geographical areas, or Ebola virus species.
+
+## E. Ebola education
+
+Provide a concise introduction to:
+
+- What Ebola is.
+- How transmission occurs.
+- Possible symptoms.
+- Prevention measures.
+- What to do after possible exposure.
+- Why professional assessment matters.
+- How to avoid stigma and misinformation.
+
+## F. Official health resources
+
+Include links to WHO, WHO Regional Office for Africa, NCDC, Federal Ministry of Health and Social Welfare, and Africa CDC.
+
+## G. Community awareness
+
+Allow users to share approved health information through WhatsApp and other supported sharing methods.
+
+Generate a shareable message containing the relevant page link or official source.
+
+Do not automatically send messages to other people.
+
+---
+
+# 5. ABOUT EBOLA PAGE
+
+Create a detailed educational page explaining:
+
+- What Ebola virus disease is.
+- Relevant Ebola virus species.
+- How transmission occurs.
+- Incubation period.
+- Common symptoms.
+- Diagnosis by healthcare professionals.
+- Available clinical care.
+- Prevention and infection control.
+- Vaccines and treatments applicable to specific virus species.
+- Myths and facts.
+- The role of public health authorities.
+
+Explain that Ebola symptoms may resemble other illnesses, including malaria. Symptoms alone cannot confirm Ebola.
+
+Do not imply that every fever is Ebola.
+
+Do not generalise vaccine availability or treatments across different Ebola virus species.
+
+Every medical article must include credible sources and a last-reviewed date.
+
+---
+
+# 6. SYMPTOMS AND EXPOSURE PAGE
+
+Create a dedicated symptoms and exposure page.
+
+Cover possible symptoms such as:
+
+- Fever.
+- Severe fatigue.
+- Headache.
+- Muscle pain.
+- Sore throat.
+- Vomiting.
+- Diarrhoea.
+- Abdominal pain.
+- Unexplained bleeding or bruising in some cases.
+
+Explain that symptoms vary and cannot independently establish a diagnosis.
+
+Display this warning prominently:
+
+"If you develop compatible symptoms after possible exposure or contact with a suspected or confirmed case, seek urgent guidance from public health authorities or a qualified healthcare professional. Call ahead before visiting a healthcare facility and explain your symptoms and possible exposure."
+
+Include a button to access official guidance.
+
+Do not implement an AI tool that claims to diagnose Ebola or calculate an unsupported probability of infection.
+
+---
+
+# 7. PREVENTION PAGE
+
+Create a practical prevention guide covering:
+
+- Avoiding direct contact with blood and other body fluids of infected people.
+- Following official guidance after possible exposure.
+- Hand hygiene.
+- Safe caregiving practices.
+- Healthcare worker infection prevention.
+- Safe handling of contaminated materials by trained professionals.
+- Safe and dignified burial practices.
+- Avoiding contact with potentially infected animals and unsafe handling of animal remains.
+- Reducing stigma against patients, survivors, families, and affected communities.
+- Following official public health and travel advice.
+
+Separate actions that ordinary members of the public can safely take from activities requiring trained professionals.
+
+Do not instruct ordinary visitors to handle potentially infectious materials.
+
+Include approved, downloadable awareness posters and prevention guides.
+
+---
+
+# 8. VERIFIED OUTBREAK NEWS
+
+Build a functional Outbreak Updates section.
+
+Support:
+
+- Official outbreak announcements.
+- Public health advisories.
+- Official contact-tracing updates.
+- Prevention announcements.
+- Changes in public health guidance.
+- Nigerian state and FCT updates.
+- Regional and international developments.
+
+Prioritise these official sources:
+
+WHO: https://www.who.int/
+
+WHO Africa: https://www.afro.who.int/
+
+NCDC: https://ncdc.gov.ng/
+
+Federal Ministry of Health and Social Welfare: https://health.gov.ng/
+
+Africa CDC: https://africacdc.org/
+
+Implement automatic retrieval through official APIs, RSS feeds, or authorised public data sources where available.
+
+If an official source has no suitable feed, provide a manual publishing workflow for authorised administrators.
+
+Do not bypass access controls or violate website terms.
+
+Each update must include:
+
+- Headline.
+- Summary.
+- Publisher.
+- Source URL.
+- Original publication date.
+- Retrieval date.
+- Verification date.
+- Relevant location.
+- Category.
+- Verification status.
+
+Implement search, date filters, category filters, pagination, and individual article pages.
+
+Clearly label AI-generated summaries. Link to the original publication.
+
+Never present AI-generated news as an official announcement.
+
+If an external service fails, retain access to stored verified updates and display an appropriate warning.
+
+Do not fabricate news articles.
+
+---
+
+# 9. OUTBREAK STATISTICS DASHBOARD
+
+Build an interactive public health dashboard with:
+
+- Country filters.
+- Location filters.
+- Reporting-period filters.
+- Case trends where reliable historical data exists.
+- Death trends where reliable historical data exists.
+- Official source information.
+- Reporting dates.
+- Downloadable CSV reports.
+- Data methodology and limitations.
+
+Support Nigeria's 36 states and the Federal Capital Territory.
+
+Only show state-level figures when a reliable official source provides them.
+
+Distinguish zero officially reported cases from unavailable data.
+
+Do not infer that a state has zero cases because no data is available.
+
+Every chart must identify the reporting period, unit, geographical scope, source, and whether values are cumulative or newly reported.
+
+If historical data is unavailable, show an honest empty state rather than fabricating a chart.
+
+---
+
+# 10. AI HEALTH ASSISTANT
+
+Build an AI-powered health education assistant using Gemini.
+
+The assistant must:
+
+- Explain Ebola in simple language.
+- Answer general prevention questions.
+- Explain official public health guidance.
+- Direct users to relevant website pages.
+- Provide real source links.
+- Identify uncertainty.
+- Display source dates where available.
+- Recommend professional assessment when appropriate.
+
+It must not:
+
+- Diagnose Ebola.
+- Prescribe medication.
+- Recommend unapproved treatments.
+- Claim a user is infected or safe.
+- Invent statistics or citations.
+- Make unsupported claims about an outbreak's origin.
+- Replace healthcare professionals.
+
+Use approved educational content and retrieved official sources where technically feasible.
+
+If information cannot be verified, say so.
+
+Keep the Gemini API key server-side.
+
+Implement input validation, rate limiting, request-size limits, abuse protection, and safe error handling.
+
+Do not expose private credentials in frontend code.
+
+Display a clear medical disclaimer.
+
+---
+
+# 11. EBOLAGUARD VIRTUAL DOCTOR
+
+Create a major feature called:
+
+**EbolaGuard Virtual Doctor**
+
+Tagline:
+
+"Health Guidance When Reaching a Hospital Is Difficult."
+
+This is an AI-assisted virtual health guidance service designed for people who have difficulty accessing a hospital or healthcare professional.
+
+The service should allow users to describe their concerns, answer relevant questions, receive general health guidance, understand warning signs, and identify appropriate next steps.
+
+The AI must not claim to be a licensed human doctor. It must not claim to replace clinical examination, laboratory testing, emergency services, or professional medical care.
+
+## A. User interface
+
+Add a prominent "Talk to Virtual Doctor" button to the homepage and navigation menu.
+
+Create a dedicated Virtual Doctor page containing:
+
+- Welcome screen.
+- Chat interface.
+- Guided health information form.
+- Symptom summary.
+- Safe next-step recommendations.
+- Relevant medical education resources.
+- Emergency help button.
+- Find Medical Help button.
+- Privacy notice.
+- Optional voice interaction where supported.
+
+Make the interface simple enough for people with limited digital literacy.
+
+Support mobile phones and slower internet connections.
+
+Allow users to access general education and urgent guidance without creating an account.
+
+## B. Welcome message
+
+Display:
+
+"Hello. I'm the EbolaGuard Virtual Doctor, an AI health assistant. I can help you understand your symptoms, provide general health guidance, and identify when you need medical attention. I cannot confirm a diagnosis or replace a licensed healthcare professional. If you may be experiencing a medical emergency, seek emergency help immediately."
+
+## C. Consultation flow
+
+Start by asking the user what health concern they need help with.
+
+If the user describes symptoms, ask only relevant questions, such as:
+
+- Main symptoms.
+- When the symptoms started.
+- Whether symptoms are getting worse.
+- Age range, when relevant.
+- Possible exposure to a suspected or confirmed Ebola case.
+- Recent travel or contact history when medically relevant.
+- Presence of serious warning signs.
+- Whether professional healthcare is accessible.
+
+Do not force users to answer every question before providing urgent guidance.
+
+Do not request names, home addresses, identity documents, or unnecessary personal information.
+
+## D. Three levels of guidance
+
+### Level 1: General guidance
+
+For mild concerns without reported emergency warning signs, provide:
+
+- General educational information.
+- Safe self-care advice where appropriate.
+- Symptoms to monitor.
+- Warning signs.
+- When to seek professional assessment.
+- Links to official resources.
+
+Do not prescribe prescription medicines or invent dosages.
+
+Do not guarantee that the user is free of serious illness.
+
+### Level 2: Prompt professional assessment
+
+For concerning symptoms or conditions requiring medical evaluation:
+
+- Explain why professional assessment matters.
+- Recommend contacting a qualified healthcare professional.
+- Offer help finding a verified local facility or telemedicine service.
+- Provide official contact information where verified.
+- Explain when symptoms require more urgent attention.
+
+Do not fabricate doctors, hospitals, telephone numbers, or service availability.
+
+### Level 3: Emergency guidance
+
+For reported emergencies, including severe difficulty breathing, unconsciousness, severe bleeding, seizures, or other serious warning signs:
+
+- Give immediate, concise instructions to seek emergency medical help.
+- Do not delay the guidance with additional questions.
+- Provide verified emergency contact information when available.
+- Offer the Find Medical Help option.
+
+If possible Ebola exposure is reported alongside compatible symptoms, advise the user to contact public health authorities or a healthcare professional urgently. Tell the user to call ahead before visiting a facility and explain the possible exposure.
+
+Never tell users they definitely have Ebola or definitely do not have it.
+
+## E. Ebola-specific safeguards
+
+If a user reports possible exposure without symptoms, direct them to current official exposure assessment and monitoring guidance.
+
+If a user reports possible exposure and compatible symptoms, immediately recommend urgent professional guidance.
+
+Do not give outdated isolation periods or unsupported quarantine instructions.
+
+Do not recommend unapproved remedies.
+
+Do not replace current official public health guidance with AI-generated advice.
+
+## F. Find Medical Help
+
+Create a feature to help users locate verified healthcare services.
+
+Support selecting a Nigerian state and local area.
+
+Where reliable information is available, display:
+
+- Hospitals.
+- Primary healthcare centres.
+- Licensed telemedicine providers.
+- Official health hotlines.
+- Public health authorities.
+
+Show the source and last verification date for contact information.
+
+Never invent addresses, telephone numbers, opening hours, doctor profiles, or service availability.
+
+If no verified local service can be identified, direct users to official NCDC or Federal Ministry of Health resources.
+
+Clearly distinguish AI health guidance from a consultation with a human clinician.
+
+## G. Optional human telemedicine integration
+
+Design the application so a verified human telemedicine service can be integrated later.
+
+Do not advertise live doctors, appointment bookings, prescriptions, or human consultations until the relevant provider integration is genuinely implemented and tested.
+
+Keep human medical consultations separate from AI guidance.
+
+## H. Virtual doctor response rules
+
+The AI must:
+
+- Use calm, plain language.
+- Ask focused questions.
+- Explain uncertainty.
+- Avoid definitive diagnoses.
+- Avoid unsafe medication advice.
+- Prioritise urgent safety instructions.
+- Use current approved medical references.
+- Provide real source links.
+- Avoid unnecessary personal data collection.
+- Never pretend to be a human doctor.
+
+---
+
+# 12. SECURE GEMINI INTEGRATION
+
+Implement two separate Supabase Edge Functions:
+
+1. `health-assistant`
+2. `virtual-doctor`
+
+The `health-assistant` function handles general health education.
+
+The `virtual-doctor` function handles symptom-related conversations and safe next-step guidance.
+
+Both must call Gemini from the server.
+
+Store the API key as a server-side secret named `GEMINI_API_KEY`.
+
+Never expose the Gemini key in the frontend.
+
+Use the current supported Gemini model configured for the project.
+
+Implement:
+
+- Input validation.
+- Rate limiting.
+- Request-size limits.
+- Abuse protection.
+- Safe error handling.
+- Prompt injection protection.
+- Source retrieval where available.
+- Structured responses.
+- Medical safety instructions.
+- Emergency escalation rules.
+- Appropriate request logging without unnecessary medical information.
+
+If a request fails, show a clear error and retain access to emergency guidance.
+
+Do not invent medical references or citations.
+
+If reliable information is unavailable, acknowledge the limitation and direct the user to an appropriate professional or official source.
+
+---
+
+# 13. OPTIONAL VOICE SUPPORT
+
+Where supported, add voice interaction to the Virtual Doctor.
+
+Include:
+
+- Microphone button.
+- Speech recognition.
+- Text-to-speech responses.
+- Text-only alternative.
+- Permission prompts.
+- Visible recording status.
+- Stop button.
+
+Do not record continuously in the background.
+
+Do not claim the user is speaking with a human doctor.
+
+If voice services are unavailable or unconfigured, keep the text consultation fully functional.
+
+---
+
+# 14. SUPABASE DATABASE
+
+Use Supabase PostgreSQL as the application's persistent database.
+
+Create SQL migrations for these tables.
+
+### profiles
+
+- id linked to Supabase Auth.
+- display_name.
+- email where necessary.
+- created_at.
+- updated_at.
+
+### user_roles
+
+- id.
+- user_id.
+- role.
+- created_at.
+
+Roles: `super_admin`, `health_editor`, `fact_checker`, `content_contributor`.
+
+### official_sources
+
+- id.
+- name.
+- website_url.
+- source_type.
+- is_active.
+- last_checked_at.
+- created_at.
+
+### health_articles
+
+- id.
+- title.
+- slug.
+- summary.
+- content.
+- category.
+- language.
+- status.
+- verification_status.
+- source references.
+- author_id.
+- reviewer_id.
+- published_at.
+- last_reviewed_at.
+- created_at.
+- updated_at.
+
+### outbreak_updates
+
+- id.
+- title.
+- summary.
+- content.
+- publisher.
+- source_url.
+- source_published_at.
+- retrieved_at.
+- verified_at.
+- verification_status.
+- location.
+- status.
+- author_id.
+- reviewer_id.
+- created_at.
+- updated_at.
+
+### outbreak_statistics
+
+- id.
+- country.
+- state_or_region.
+- virus_species.
+- statistic_type.
+- value.
+- unit.
+- reporting_period_start.
+- reporting_period_end.
+- source_id.
+- source_url.
+- source_published_at.
+- verified_at.
+- verification_status.
+- created_at.
+- updated_at.
+
+### awareness_resources
+
+- id.
+- title.
+- description.
+- resource_type.
+- file_path.
+- language.
+- source_url.
+- status.
+- created_at.
+
+### state_health_resources
+
+- id.
+- state_name.
+- organisation_name.
+- official_website.
+- verified_contact_details.
+- source_url.
+- verified_at.
+- status.
+- created_at.
+- updated_at.
+
+### faqs
+
+- id.
+- question.
+- answer.
+- language.
+- category.
+- status.
+- created_at.
+- updated_at.
+
+### translations
+
+- id.
+- content_type.
+- content_id.
+- language.
+- translated_title.
+- translated_content.
+- review_status.
+- reviewer_id.
+- created_at.
+- updated_at.
+
+### subscriptions
+
+- id.
+- email.
+- consent_status.
+- preferred_language.
+- status.
+- created_at.
+- unsubscribed_at.
+
+### misinformation_reports
+
+- id.
+- report_category.
+- description.
+- reported_url.
+- status.
+- assigned_to.
+- resolution_notes.
+- created_at.
+- updated_at.
+
+### audit_logs
+
+- id.
+- actor_id.
+- action.
+- entity_type.
+- entity_id.
+- metadata.
+- created_at.
+
+### system_settings
+
+- id.
+- setting_key.
+- setting_value.
+- updated_at.
+- updated_by.
+
+### virtual_consultation_sessions
+
+- id.
+- user_id, nullable for anonymous sessions.
+- anonymous_session_id, where appropriate.
+- session_status.
+- created_at.
+- updated_at.
+- expires_at.
+
+### virtual_consultation_messages
+
+- id.
+- session_id.
+- sender_type.
+- message_content.
+- created_at.
+
+### virtual_doctor_feedback
+
+- id.
+- session_id, nullable where appropriate.
+- feedback_type.
+- rating where appropriate.
+- feedback_text where appropriate.
+- created_at.
+
+Use correct PostgreSQL data types, UUIDs where appropriate, foreign keys, constraints, indexes, and timezone-aware timestamps.
+
+Apply appropriate data retention rules to consultation messages.
+
+Do not retain identifiable medical conversations unnecessarily.
+
+Allow anonymous users to receive basic guidance without requiring their health conversations to be permanently stored.
+
+---
+
+# 15. SUPABASE CONFIGURATION
+
+Use the official Supabase JavaScript client.
+
+Create a reusable client at:
+
+`src/lib/supabase.ts`
+
+Configure:
+
+`VITE_SUPABASE_URL`
+
+`VITE_SUPABASE_ANON_KEY`
+
+Use the current Supabase publishable key format where supported.
+
+Keep privileged secret keys exclusively on the server.
+
+Create `.env.example` with placeholder values.
+
+Do not invent credentials.
+
+If credentials are missing, implement the code and explain where the user must enter the real project URL and publishable key.
+
+Do not expose the Supabase service-role key or Gemini API key in the browser.
+
+---
+
+# 16. ROW LEVEL SECURITY
+
+Enable Row Level Security on every relevant table accessible through the Supabase API.
+
+Implement and test these policies:
+
+- Anonymous users can read only approved public articles.
+- Anonymous users can read only published and verified outbreak updates.
+- Anonymous users can read only approved public statistics.
+- Public visitors cannot modify verified medical information.
+- Users cannot grant themselves administrator roles.
+- Health editors can manage content within their permissions.
+- Fact checkers can review content within their permissions.
+- Content contributors cannot publish unreviewed medical information.
+- Only authorised administrators can manage roles and system settings.
+- Private subscriptions are not publicly readable.
+- Misinformation reports are not publicly readable.
+- Audit logs are protected against unauthorised modification.
+- Users cannot read other users' private profiles or consultation records.
+- Anonymous consultation sessions cannot be accessed by other visitors.
+- Virtual doctor feedback cannot expose private conversation content.
+
+Use secure database functions and server-side role checks where necessary.
+
+Do not rely on frontend checks alone.
+
+Prevent recursive RLS policy problems.
+
+Do not grant excessive database privileges to authenticated users.
+
+---
+
+# 17. SUPABASE STORAGE
+
+Create these storage buckets:
+
+- `awareness-resources`
+- `article-images`
+- `public-documents`
+
+Allow public reading only for approved public materials.
+
+Restrict file uploads, replacement, and deletion to authorised roles.
+
+Validate file types, extensions, MIME types, and file sizes.
+
+Store file paths in PostgreSQL.
+
+Do not store important application data only in browser localStorage.
+
+---
+
+# 18. ADDITIONAL SUPABASE EDGE FUNCTIONS
+
+Implement these server-side functions:
+
+### `fetch-official-updates`
+
+Retrieve official public health announcements from supported sources.
+
+### `refresh-outbreak-data`
+
+Retrieve available official statistics, validate them, and flag discrepancies.
+
+### `verify-health-content`
+
+Support human review, source recording, and verification workflows.
+
+### `admin-management`
+
+Perform privileged administrative operations after server-side authorisation.
+
+### `manage-subscriptions`
+
+Handle consent, subscriptions, and unsubscribe requests.
+
+### `report-misinformation`
+
+Validate and securely store reports.
+
+Use appropriate authentication, validation, rate limiting, logging, and error handling.
+
+Use a supported scheduling mechanism for periodic retrieval.
+
+Do not invent API integrations or claim unsupported services are connected.
+
+---
+
+# 19. SECURE ADMIN DASHBOARD
+
+Build a complete administration portal with:
+
+- Admin login and logout.
+- Password reset.
+- Protected routes.
+- Role-based access.
+- Content management.
+- Outbreak updates management.
+- Statistics management.
+- Official source management.
+- Awareness resource uploads.
+- Translation review.
+- FAQ management.
+- State health resources.
+- Misinformation report review.
+- Homepage alert management.
+- Retrieval logs.
+- Verification history.
+- Audit logs.
+- Virtual doctor system monitoring.
+- Gemini request usage and latency.
+- Service error monitoring.
+- Aggregate feedback analytics.
+
+Do not expose private consultation transcripts in general analytics.
+
+Restrict sensitive records to explicitly authorised processes where necessary.
+
+Do not provide public administrator registration.
+
+Create the first administrator using a secure documented setup procedure.
+
+Record important administrative actions with timestamps.
+
+---
+
+# 20. MULTILINGUAL SUPPORT
+
+Support:
+
+- English.
+- Nigerian Pidgin.
+- Yoruba.
+- Hausa.
+- Igbo.
+
+Create a working language selector and central translation system.
+
+Translate navigation, core prevention instructions, warnings, FAQs, and emergency guidance.
+
+Use professionally reviewed translations for critical medical instructions where possible.
+
+Flag machine-generated translations for review before treating them as approved medical guidance.
+
+The Virtual Doctor may respond in the selected supported language when it can do so reliably.
+
+If the system cannot provide a reliable medical response in the requested language, say so and offer a supported alternative.
+
+---
+
+# 21. PRIVACY AND MEDICAL DISCLAIMERS
+
+Before a virtual consultation begins, explain:
+
+- The service uses AI.
+- It does not provide a confirmed diagnosis.
+- It does not replace a licensed doctor.
+- It cannot guarantee that every medical emergency will be recognised.
+- Information submitted may be processed to generate a response.
+- Whether the session is stored and for how long.
+- How to access the privacy policy.
+
+Do not collect unnecessary personal information.
+
+Do not use consultation content for advertising.
+
+Do not sell sensitive health information.
+
+Implement appropriate consent, retention, deletion, and access controls.
+
+Create an accurate privacy policy and terms of use.
+
+Do not claim legal or medical compliance without verifying the implementation.
+
+---
+
+# 22. INITIAL EDUCATIONAL CONTENT
+
+Create these initial articles:
+
+- What Is Ebola?
+- How Ebola Spreads.
+- Common Ebola Symptoms.
+- What to Do After Possible Exposure.
+- Ebola Prevention for the General Public.
+- Ebola Guidance for Healthcare Workers.
+- Ebola Myths and Facts.
+- Protecting Communities Without Stigma.
+- Understanding Official Outbreak Statistics.
+- Where to Find Verified Health Information in Nigeria.
+- When to Seek Urgent Medical Help.
+- How to Use the EbolaGuard Virtual Doctor Safely.
+
+Use authoritative sources and include publication or review dates.
+
+Official resources:
+
+WHO Ebola information:
+https://www.who.int/health-topics/ebola
+
+WHO Regional Office for Africa:
+https://www.afro.who.int/
+
+NCDC:
+https://ncdc.gov.ng/
+
+Federal Ministry of Health and Social Welfare:
+https://health.gov.ng/
+
+Africa CDC:
+https://africacdc.org/
+
+Retrieve current outbreak information from official publications when available.
+
+Save original source URLs, publication dates, retrieval dates, and verification dates.
+
+Never invent case counts or publish old information as new.
+
+Do not copy large sections of copyrighted material.
+
+---
+
+# 23. SEO AND PERFORMANCE
+
+Optimise for Nigerian users, including people on slower internet connections.
+
+Implement:
+
+- Responsive images.
+- Lazy loading.
+- Code splitting.
+- Efficient database queries.
+- Pagination.
+- Appropriate caching.
+- Search-friendly page titles and descriptions.
+- Open Graph metadata.
+- Sitemap.
+- Robots.txt.
+- Semantic HTML.
+- Accessible focus indicators.
+- Helpful error pages.
+
+Do not cache outbreak statistics or emergency warnings beyond their intended freshness period.
+
+---
+
+# 24. REQUIRED PAGES
+
+Build and connect all these pages:
+
+1. Home.
+2. About Ebola.
+3. Symptoms and Exposure.
+4. Prevention.
+5. Outbreak Updates.
+6. Outbreak Statistics.
+7. Individual Outbreak Article.
+8. AI Health Assistant.
+9. Virtual Doctor.
+10. Emergency Help.
+11. Find Medical Help.
+12. Awareness Resources.
+13. Frequently Asked Questions.
+14. About Us.
+15. Contact and Feedback.
+16. Privacy Policy.
+17. Terms of Use.
+18. Admin Login.
+19. Admin Dashboard.
+20. Article Management.
+21. Statistics Management.
+22. Source Verification.
+23. Translation Management.
+24. Resource Management.
+25. Misinformation Reports.
+26. System Monitoring.
+
+Every navigation item, button, form, filter, and administrative action must work.
+
+Do not create dead links or empty pages disguised as completed features.
+
+---
+
+# 25. TESTING REQUIREMENTS
+
+Before declaring the project complete, test:
+
+1. All public pages render correctly.
+2. Navigation works on mobile and desktop.
+3. All buttons and forms function.
+4. Supabase connects with valid credentials.
+5. Authentication and password reset work.
+6. Unauthorised users cannot access admin operations.
+7. RLS prevents unauthorised data access.
+8. Database changes persist after refresh.
+9. Administrators can create, review, publish, edit, and archive content.
+10. Published content appears correctly on the public website.
+11. Statistics display source links and reporting dates.
+12. Missing statistics never appear as zero.
+13. Failed external requests show appropriate error states.
+14. The health assistant does not diagnose users or invent citations.
+15. The Virtual Doctor provides urgent guidance for simulated emergency cases.
+16. Possible Ebola exposure triggers appropriate professional referral guidance.
+17. The Virtual Doctor does not prescribe unsupported medication or claim definitive diagnoses.
+18. Consultation privacy controls work.
+19. Language selection works for implemented translations.
+20. Search, filters, downloads, and sharing work.
+21. File uploads respect storage policies.
+22. API keys are not exposed in frontend bundles.
+23. No fabricated outbreak statistics appear in production.
+24. No critical button is a nonfunctional placeholder.
+25. The website works on Vercel with correct environment variables.
+26. All unresolved errors and external dependencies are documented.
+
+Test with simulated cases covering general questions, mild symptoms, worsening symptoms, possible Ebola exposure, severe breathing difficulty, unconsciousness, severe bleeding, medication requests, missing official contacts, API failures, and unauthorised access.
+
+Do not use real patients' private information for testing.
+
+---
+
+# 26. BUILD ORDER
+
+Build the application in these phases:
+
+**Phase 1:** Create the complete public website, design system, navigation, and responsive layouts.
+
+**Phase 2:** Configure Supabase, database migrations, authentication, RLS, and storage policies.
+
+**Phase 3:** Implement the admin dashboard and content management system.
+
+**Phase 4:** Implement official-source retrieval, outbreak statistics, verification, and publishing workflows.
+
+**Phase 5:** Implement the AI Health Assistant using a secure Edge Function.
+
+**Phase 6:** Implement the Virtual Doctor, safety logic, consultation interface, and Find Medical Help feature.
+
+**Phase 7:** Implement multilingual support, resource downloads, sharing, feedback, and optional subscriptions.
+
+**Phase 8:** Test security, database operations, medical safety behaviour, mobile usability, and deployment.
+
+Do not stop after generating the homepage.
+
+Continue until the required pages, backend workflows, and security policies are implemented.
+
+Do not replace backend operations with localStorage, fake login screens, mock API responses, or hardcoded data.
+
+If credentials are missing, create the integration code and provide precise setup instructions.
+
+---
+
+# 27. REQUIRED DELIVERABLES
+
+Provide:
+
+- Complete React and TypeScript source code.
+- All required pages and reusable components.
+- Supabase client configuration.
+- SQL migrations.
+- Row Level Security policies.
+- Storage policies.
+- Supabase Edge Function source code.
+- `.env.example`.
+- Deployment configuration.
+- Secure administrator setup instructions.
+- Supabase configuration guide.
+- Vercel deployment guide.
+- Testing results.
+- A list of working integrations.
+- A list of integrations requiring credentials.
+- A list of unresolved errors or features requiring manual review.
+
+---
+
+# 28. FINAL INSTRUCTIONS
+
+Build EbolaGuard NG as a complete, responsive, secure Nigerian public health platform inspired by the supplied LassaGuard AI reference.
+
+The website must include verified Ebola awareness, current official outbreak updates, an interactive statistics dashboard, an AI Health Assistant, and an AI Virtual Doctor for people who have difficulty accessing healthcare.
+
+Use Supabase as the only primary backend.
+
+Use Gemini securely through server-side Edge Functions.
+
+Display the exact developer credit:
+
+"Developed by OLANREWAJU SAMUEL"
+
+Prioritise medical safety, reliable information, privacy, accessibility, and working functionality over visual effects.
+
+Never claim that the AI Virtual Doctor is a licensed human doctor or a replacement for professional medical care.
+
+Do not invent medical contacts, statistics, source links, or available healthcare services.
+
+Do not claim the website is production-ready until its backend, security policies, source integrations, and critical workflows have been configured and tested.
+
+Start building the complete application now.

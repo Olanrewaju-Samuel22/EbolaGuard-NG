@@ -1,0 +1,164 @@
+import React from 'react';
+import { Shield, Heart, Globe2 } from 'lucide-react';
+import { SupportedLanguage } from '../types';
+
+interface FooterProps {
+  onSelectTab: (tab: string) => void;
+  language: SupportedLanguage;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
+  return (
+    <footer className="bg-foreground text-background py-12 md:py-16 border-t border-border/20">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-12">
+          {/* Brand Column */}
+          <div className="sm:col-span-2 space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary flex items-center justify-center shadow-sm">
+                <Shield className="w-4 h-4 md:w-5 md:h-5 text-white" />
+              </div>
+              <span className="font-display font-bold text-lg md:text-xl text-white tracking-tight">
+                EbolaGuard<span className="text-primary">NG</span>
+              </span>
+            </div>
+
+            <p className="text-background/70 max-w-md text-sm md:text-base leading-relaxed">
+              AI-powered Ebola prevention and early risk detection platform for Nigeria. Helping Nigerian communities detect risk early, understand symptoms, prevent outbreaks, and access rapid medical guidance.
+            </p>
+
+            <div className="flex items-center gap-2 text-xs md:text-sm text-background/60 pt-1">
+              <Heart className="w-3.5 h-3.5 text-destructive fill-destructive" />
+              <span>Built with purpose for Nigerian and global health security</span>
+            </div>
+          </div>
+
+          {/* Column: Platform Links */}
+          <div>
+            <h4 className="font-semibold mb-3 md:mb-4 text-sm uppercase tracking-wider text-background/80">
+              Platform
+            </h4>
+            <ul className="space-y-2.5 text-background/70 text-sm">
+              <li>
+                <button
+                  onClick={() => onSelectTab('virtual-doctor')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Risk Assessment (Virtual Doctor)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('prevention')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Prevention & Guidelines
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('updates')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Outbreak Updates
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('statistics')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Outbreak Statistics Dashboard
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('find-help')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Healthcare Facilities Directory
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('admin')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Staff Portal Sign In
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column: Legal & Ethics */}
+          <div>
+            <h4 className="font-semibold mb-3 md:mb-4 text-sm uppercase tracking-wider text-background/80">
+              Legal & Ethics
+            </h4>
+            <ul className="space-y-2.5 text-background/70 text-sm">
+              <li>
+                <button
+                  onClick={() => onSelectTab('privacy')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Privacy Policy
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('terms')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Terms of Service & Disclaimer
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('about-ebola')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Clinical Data Ethics
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('emergency')}
+                  className="hover:text-primary transition-colors text-left text-destructive font-medium"
+                >
+                  Emergency Contacts (6232)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onSelectTab('contact')}
+                  className="hover:text-primary transition-colors text-left"
+                >
+                  Report Misinformation
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar matching reference */}
+        <div className="border-t border-background/10 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-center md:text-left">
+            <p className="text-xs md:text-sm text-background/60">
+              © 2026 EbolaGuard NG. All rights reserved. Not for medical diagnosis.
+            </p>
+            <p className="text-xs md:text-sm text-background/70 mt-1">
+              Developed by <span className="text-primary font-medium">OLANREWAJU SAMUEL</span>
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-xs md:text-sm text-background/60 flex items-center gap-2">
+              <Globe2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent" />
+              <span>SDG 3 Aligned: Good Health and Well-being</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};

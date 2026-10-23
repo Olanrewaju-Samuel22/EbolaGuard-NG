@@ -1,0 +1,8 @@
+{
+  "name": "EbolaGuard NG",
+  "description": "Verified Information. Early Awareness. Safer Communities. Official Nigerian Ebola public health platform with AI health assistant and Virtual Doctor. Developed by OLANREWAJU SAMUEL.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
