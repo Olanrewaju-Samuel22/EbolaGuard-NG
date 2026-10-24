@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle, ExternalLink, ChevronRight, X } from 'lucide-react';
 import { OutbreakUpdate } from '../types';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface OutbreakAlertBannerProps {
   update: OutbreakUpdate;
@@ -13,6 +14,8 @@ export const OutbreakAlertBanner: React.FC<OutbreakAlertBannerProps> = ({
   onReadFullUpdate,
   onDismiss
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-[#123D32] border-b border-emerald-800 text-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -25,23 +28,23 @@ export const OutbreakAlertBanner: React.FC<OutbreakAlertBannerProps> = ({
             <div className="space-y-0.5">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-emerald-300">
-                  Official Public Health Status:
+                  {t.alert.officialBadge}:
                 </span>
                 <span className="text-white font-medium">
                   {update.title}
                 </span>
                 <span className="text-emerald-300/60 hidden sm:inline">·</span>
                 <span className="text-emerald-200/90 text-xs">
-                  Location: {update.location}
+                  {t.alert.locationLabel}: {update.location}
                 </span>
               </div>
               <p className="text-xs text-emerald-100/90 line-clamp-1">
                 {update.summary}
               </p>
-              <div className="flex items-center gap-2 text-[11px] text-emerald-300/80 pt-0.5">
-                <span>Published: {new Date(update.source_published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+              <div className="flex items-center gap-2 text-[11px] text-emerald-300/80 pt-0.5 flex-wrap">
+                <span>{t.alert.publishedLabel}: {new Date(update.source_published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                 <span aria-hidden="true">·</span>
-                <span>Verified: {new Date(update.verified_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                <span>{t.common.verified}: {new Date(update.verified_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                 <span aria-hidden="true">·</span>
                 <a
                   href={update.source_url}
@@ -62,14 +65,14 @@ export const OutbreakAlertBanner: React.FC<OutbreakAlertBannerProps> = ({
               onClick={() => onReadFullUpdate(update)}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-[#18794E] hover:bg-[#1e9963] text-white text-xs font-semibold transition-colors"
             >
-              <span>Read Full Brief</span>
+              <span>{t.alert.readFullBrief}</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
             {onDismiss && (
               <button
                 onClick={onDismiss}
                 className="p-1 rounded text-emerald-300/80 hover:text-white hover:bg-emerald-900/60"
-                aria-label="Dismiss banner"
+                aria-label={t.alert.dismiss}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -80,3 +83,4 @@ export const OutbreakAlertBanner: React.FC<OutbreakAlertBannerProps> = ({
     </div>
   );
 };
+export default OutbreakAlertBanner;

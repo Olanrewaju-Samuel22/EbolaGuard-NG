@@ -1,7 +1,15 @@
 import React from 'react';
 import { Shield, HeartHandshake, Award, ExternalLink, Code2 } from 'lucide-react';
+import { useTranslation } from '../contexts/LanguageContext';
+import { SupportedLanguage } from '../types';
 
-export const AboutUsPage: React.FC = () => {
+interface AboutUsPageProps {
+  language?: SupportedLanguage;
+}
+
+export const AboutUsPage: React.FC<AboutUsPageProps> = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Reference Signature Header Banner */}
@@ -9,13 +17,13 @@ export const AboutUsPage: React.FC = () => {
         <div className="container mx-auto px-4 py-10 sm:py-12 max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary text-xs sm:text-sm font-medium mb-3">
             <Shield className="w-4 h-4" />
-            <span>Mission & Public Health Governance</span>
+            <span>{t.aboutUs.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3 bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">
-            About EbolaGuard NG
+            {t.aboutUs.title}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            A dedicated Nigerian public health intelligence portal engineered to democratize verified Ebola awareness, counter dangerous health misinformation, and provide clinical-grade AI triage guidance to underserved communities.
+            {t.aboutUs.subtitle}
           </p>
         </div>
       </div>
@@ -25,13 +33,13 @@ export const AboutUsPage: React.FC = () => {
         <div className="p-6 sm:p-8 rounded-2xl bg-card border-2 border-primary/20 shadow-xs space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
             <Code2 className="w-4 h-4" />
-            <span>Official Developer Credit</span>
+            <span>{t.aboutUs.devCreditBadge}</span>
           </div>
           <h2 className="text-2xl font-bold text-foreground">
-            Developed by OLANREWAJU SAMUEL
+            {t.aboutUs.devCreditTitle}
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-2xl">
-            EbolaGuard NG was conceptualized and developed by <strong>OLANREWAJU SAMUEL</strong> as a high-fidelity digital response to public health crises in Nigeria and West Africa, blending robust software engineering with verified epidemiological science.
+            {t.aboutUs.devCreditDesc}
           </p>
         </div>
 
@@ -41,9 +49,9 @@ export const AboutUsPage: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#18794E] flex items-center justify-center">
             <Shield className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-[#1F2937]">Verified Information</h3>
+          <h3 className="text-base font-bold text-[#1F2937]">{t.aboutUs.pillar1Title}</h3>
           <p className="text-xs text-gray-600 leading-relaxed">
-            Every statistic, fact, and health advisory is strictly grounded in official publications from the Nigeria Centre for Disease Control (NCDC), Federal Ministry of Health, and WHO.
+            {t.aboutUs.pillar1Desc}
           </p>
         </div>
 
@@ -51,9 +59,9 @@ export const AboutUsPage: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#0F766E] flex items-center justify-center">
             <HeartHandshake className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-[#1F2937]">Early Awareness</h3>
+          <h3 className="text-base font-bold text-[#1F2937]">{t.aboutUs.pillar2Title}</h3>
           <p className="text-xs text-gray-600 leading-relaxed">
-            Educating citizens to identify early febrile manifestations and exposure risks early, enabling prompt hospital presentation before complications develop.
+            {t.aboutUs.pillar2Desc}
           </p>
         </div>
 
@@ -61,9 +69,9 @@ export const AboutUsPage: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#123D32] flex items-center justify-center">
             <Award className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-[#1F2937]">Safer Communities</h3>
+          <h3 className="text-base font-bold text-[#1F2937]">{t.aboutUs.pillar3Title}</h3>
           <p className="text-xs text-gray-600 leading-relaxed">
-            Eliminating community stigma against survivors, ensuring safe and dignified burial education, and debunking toxic rumours like saltwater bathing.
+            {t.aboutUs.pillar3Desc}
           </p>
         </div>
       </div>

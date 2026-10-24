@@ -68,7 +68,19 @@ app.post('/api/health-assistant', async (req: Request, res: Response) => {
   }
 
   try {
-    const prompt = `Language: ${language}. User Question: "${sanitized}". Provide a clear, supportive response following your public health guidelines.`;
+    const languageNames: Record<string, string> = {
+      en: 'English',
+      pcm: 'Nigerian Pidgin English (fluent, respectful Nigerian Pidgin)',
+      yo: 'Yoruba (Yorùbá)',
+      ha: 'Hausa',
+      ig: 'Igbo'
+    };
+    const targetLangName = languageNames[language] || 'English';
+
+    const prompt = `TARGET LANGUAGE: ${targetLangName} (Language code: "${language}").
+IMPORTANT: You MUST write your entire response strictly in ${targetLangName}. Do not respond in English unless the requested language is 'en'.
+
+User Question: "${sanitized}". Provide a clear, supportive public health response following your guidelines.`;
     const response = await genAI.models.generateContent({
       model: 'gemini-3.8-flash',
       contents: prompt,
@@ -107,7 +119,18 @@ app.post('/api/virtual-doctor', async (req: Request, res: Response) => {
   }
 
   try {
-    const prompt = `Language: ${language}.
+    const languageNames: Record<string, string> = {
+      en: 'English',
+      pcm: 'Nigerian Pidgin English',
+      yo: 'Yoruba (Yorùbá)',
+      ha: 'Hausa',
+      ig: 'Igbo'
+    };
+    const targetLangName = languageNames[language] || 'English';
+
+    const prompt = `TARGET LANGUAGE: ${targetLangName} (Code: "${language}").
+IMPORTANT: You MUST write the string values (level_name, summary, warning_signs_detected, recommended_actions, safe_self_care, monitoring_points, disclaimer) in ${targetLangName}. Keep clinical accuracy.
+
 User Concern: "${sanitized}"
 Symptom details:
 - Symptoms selected: ${(answers?.symptoms || []).join(', ') || 'None specified'}
@@ -121,13 +144,13 @@ Symptom details:
 Analyze this clinical presentation and return a JSON object with:
 {
   "level": 1 | 2 | 3,
-  "level_name": "General Guidance" | "Prompt Professional Assessment" | "Immediate Emergency Medical Attention",
-  "summary": "concise plain-language clinical summary",
-  "warning_signs_detected": ["list of identified signs"],
+  "level_name": "General Guidance / Level name in ${targetLangName}",
+  "summary": "concise plain-language clinical summary in ${targetLangName}",
+  "warning_signs_detected": ["list of identified signs in ${targetLangName}"],
   "exposure_risk_flag": boolean,
-  "recommended_actions": ["bullet points for patient"],
-  "safe_self_care": ["safe hydration, rest, paracetamol caution"],
-  "monitoring_points": ["signs to watch for"],
+  "recommended_actions": ["bullet points for patient in ${targetLangName}"],
+  "safe_self_care": ["safe hydration, rest, paracetamol caution in ${targetLangName}"],
+  "monitoring_points": ["signs to watch for in ${targetLangName}"],
   "urgent_contacts": [
     { "label": "NCDC Toll-Free", "phone": "6232", "description": "National Public Health Emergency Line" }
   ],

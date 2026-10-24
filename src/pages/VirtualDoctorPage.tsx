@@ -15,16 +15,20 @@ import {
 } from 'lucide-react';
 import { SupportedLanguage, VirtualDoctorTriageResult } from '../types';
 import { consultVirtualDoctor } from '../lib/ai-service';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface VirtualDoctorPageProps {
   onSelectTab: (tab: string) => void;
-  language: SupportedLanguage;
+  language?: SupportedLanguage;
 }
 
 export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
   onSelectTab,
-  language
+  language: propLanguage
 }) => {
+  const { language: ctxLanguage, t } = useTranslation();
+  const activeLanguage = propLanguage || ctxLanguage;
+
   // Voice states
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -53,16 +57,15 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
   ];
 
   const symptomOptions = [
-    'High Fever / Chills',
-    'Severe Weakness / Prostration',
-    'Frontal Headache',
-    'Muscle / Joint Aches',
-    'Sore Throat',
-    'Nausea / Vomiting',
-    'Watery Diarrhoea',
-    'Abdominal Pain',
-    'Unexplained Bleeding or Bruising',
-    'Loss of Appetite'
+    { key: 'fever', label: t.symptoms.feverLabel },
+    { key: 'fatigue', label: t.symptoms.fatigueLabel },
+    { key: 'headache', label: t.symptoms.headacheLabel },
+    { key: 'musclePain', label: t.symptoms.musclePainLabel },
+    { key: 'soreThroat', label: t.symptoms.soreThroatLabel },
+    { key: 'vomiting', label: t.symptoms.vomitingLabel },
+    { key: 'diarrhea', label: t.symptoms.diarrheaLabel },
+    { key: 'abdominalPain', label: t.symptoms.abdominalPainLabel },
+    { key: 'bleeding', label: t.symptoms.bleedingLabel }
   ];
 
   useEffect(() => {
@@ -84,7 +87,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.lang = language === 'yo' ? 'yo-NG' : language === 'ha' ? 'ha-NG' : language === 'ig' ? 'ig-NG' : 'en-NG';
+      recognition.lang = activeLanguage === 'yo' ? 'yo-NG' : activeLanguage === 'ha' ? 'ha-NG' : activeLanguage === 'ig' ? 'ig-NG' : 'en-NG';
       recognition.continuous = false;
       recognition.interimResults = false;
 
@@ -121,11 +124,11 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
     window.speechSynthesis.speak(utterance);
   };
 
-  const toggleSymptom = (s: string) => {
-    if (selectedSymptoms.includes(s)) {
-      setSelectedSymptoms(selectedSymptoms.filter((item) => item !== s));
+  const toggleSymptom = (label: string) => {
+    if (selectedSymptoms.includes(label)) {
+      setSelectedSymptoms(selectedSymptoms.filter((item) => item !== label));
     } else {
-      setSelectedSymptoms([...selectedSymptoms, s]);
+      setSelectedSymptoms([...selectedSymptoms, label]);
     }
   };
 
@@ -144,7 +147,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
           ageGroup,
           locationState
         },
-        language
+        activeLanguage
       );
       setTriageResult(result);
       setStep('result');
@@ -171,20 +174,20 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Banner matching reference Vde */}
+      {/* Banner */}
       <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-success/10 border-b border-primary/10">
         <div className="container mx-auto px-4 py-12 text-center max-w-4xl">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 text-primary text-xs sm:text-sm font-medium mb-4">
             <span>🛡️</span>
-            <span>AI-Powered Assessment & Virtual Doctor</span>
+            <span>{t.virtualDoctor.badge}</span>
           </div>
 
           <h1 className="text-3xl md:text-5xl font-display font-bold mb-4 bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">
-            AI-Powered Risk Assessment
+            {t.virtualDoctor.title}
           </h1>
 
           <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Answer a few questions about your symptoms and exposure history to receive personalized risk guidance — designed for communities across Nigeria.
+            {t.virtualDoctor.subtitle}
           </p>
         </div>
       </div>
@@ -196,25 +199,25 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
             <div className="p-5 rounded-2xl bg-secondary/50 border border-border text-xs sm:text-sm text-foreground space-y-3">
               <div className="flex items-center gap-2 font-bold text-foreground text-sm sm:text-base">
                 <Shield className="w-5 h-5 text-primary" />
-                <span>Welcome Message & Transparency Notice</span>
+                <span>{t.virtualDoctor.welcomeHeader}</span>
               </div>
               <p className="leading-relaxed text-muted-foreground">
-                "Hello. I'm the <strong>EbolaGuard Virtual Doctor</strong>, an AI health assistant. I can help you understand your symptoms, provide general health guidance, and identify when you need medical attention. I cannot confirm a diagnosis or replace a licensed healthcare professional. If you may be experiencing a medical emergency, seek emergency help immediately."
+                {t.virtualDoctor.welcomeText}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-muted-foreground">
               <div className="p-4 rounded-xl border border-border bg-card space-y-1">
-                <span className="font-bold text-foreground text-sm block">1. Describe Symptoms</span>
-                <p>Input fever duration, weakness, and potential exposure context.</p>
+                <span className="font-bold text-foreground text-sm block">{t.virtualDoctor.step1Title}</span>
+                <p>{t.virtualDoctor.step1Desc}</p>
               </div>
               <div className="p-4 rounded-xl border border-border bg-card space-y-1">
-                <span className="font-bold text-foreground text-sm block">2. Safety Triage</span>
-                <p>Categorizes cases into Level 1 (General), Level 2 (Clinic), or Level 3 (Emergency).</p>
+                <span className="font-bold text-foreground text-sm block">{t.virtualDoctor.step2Title}</span>
+                <p>{t.virtualDoctor.step2Desc}</p>
               </div>
               <div className="p-4 rounded-xl border border-border bg-card space-y-1">
-                <span className="font-bold text-foreground text-sm block">3. Safe Guidance</span>
-                <p>Receive call-ahead instructions, hydration tips, and nearest hospital contacts.</p>
+                <span className="font-bold text-foreground text-sm block">{t.virtualDoctor.step3Title}</span>
+                <p>{t.virtualDoctor.step3Desc}</p>
               </div>
             </div>
 
@@ -223,7 +226,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                 onClick={() => setStep('form')}
                 className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-xs transition-all active:scale-95 text-center"
               >
-                Start Free Risk Assessment →
+                {t.virtualDoctor.startBtn} →
               </button>
 
               <button
@@ -231,7 +234,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                 className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-destructive/10 hover:bg-destructive/15 text-destructive font-bold text-xs border border-destructive/20 transition-colors inline-flex items-center justify-center gap-2"
               >
                 <PhoneCall className="w-4 h-4 text-destructive" />
-                <span>Call Emergency (6232)</span>
+                <span>{t.common.emergencyCallText}</span>
               </button>
             </div>
           </div>
@@ -242,11 +245,8 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
           <div className="bg-card rounded-2xl p-6 sm:p-8 border border-border shadow-xs space-y-8">
             <div>
               <h2 className="text-xl font-bold font-display text-foreground">
-                Step 1: Describe your health concern
+                {t.virtualDoctor.step1Title}: {t.virtualDoctor.concernLabel}
               </h2>
-              <p className="text-xs text-muted-foreground mt-1">
-                Describe your symptoms, or use voice dictation.
-              </p>
             </div>
 
             <div className="relative">
@@ -254,7 +254,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                 rows={4}
                 value={concernText}
                 onChange={(e) => setConcernText(e.target.value)}
-                placeholder="e.g. Sudden high fever for 2 days, body weakness and headache..."
+                placeholder={t.virtualDoctor.concernPlaceholder}
                 className="w-full p-4 rounded-xl border border-input text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-primary bg-background"
               />
               {speechSupported && (
@@ -268,7 +268,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                   }`}
                 >
                   <Mic className="w-3.5 h-3.5 text-primary" />
-                  <span>{isListening ? 'Listening...' : 'Voice Dictate'}</span>
+                  <span>{isListening ? t.virtualDoctor.voiceListening : t.virtualDoctor.voiceInputBtn}</span>
                 </button>
               )}
             </div>
@@ -276,23 +276,23 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
             {/* Symptoms Grid */}
             <div className="space-y-3">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-                Step 2: Check matching symptoms
+                {t.virtualDoctor.symptomsLabel}
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                 {symptomOptions.map((sym) => {
-                  const isSelected = selectedSymptoms.includes(sym);
+                  const isSelected = selectedSymptoms.includes(sym.label);
                   return (
                     <button
-                      key={sym}
+                      key={sym.key}
                       type="button"
-                      onClick={() => toggleSymptom(sym)}
+                      onClick={() => toggleSymptom(sym.label)}
                       className={`p-3 rounded-xl text-left text-xs font-medium border transition-all flex items-center justify-between ${
                         isSelected
                           ? 'border-primary bg-primary/10 text-primary font-bold shadow-2xs'
                           : 'border-border hover:bg-secondary text-foreground bg-card'
                       }`}
                     >
-                      <span>{sym}</span>
+                      <span>{sym.label}</span>
                       {isSelected && <CheckCircle2 className="w-4 h-4 text-primary" />}
                     </button>
                   );
@@ -304,39 +304,38 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-                  Duration
+                  {t.virtualDoctor.durationLabel}
                 </label>
                 <select
                   value={durationDays}
                   onChange={(e) => setDurationDays(parseInt(e.target.value, 10))}
                   className="w-full px-3 py-2.5 rounded-xl border border-input text-xs bg-background focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  <option value={1}>Less than 24 hours</option>
-                  <option value={2}>1 – 2 days</option>
-                  <option value={3}>3 – 5 days</option>
-                  <option value={7}>More than 7 days</option>
+                  <option value={1}>1 {t.common.days}</option>
+                  <option value={2}>2 {t.common.days}</option>
+                  <option value={3}>3 – 5 {t.common.days}</option>
+                  <option value={7}>7+ {t.common.days}</option>
                 </select>
               </div>
 
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-                  Age Range
+                  {t.virtualDoctor.ageLabel}
                 </label>
                 <select
                   value={ageGroup}
                   onChange={(e) => setAgeGroup(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl border border-input text-xs bg-background focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  <option value="infant">Under 5 years</option>
-                  <option value="child">Child (5 – 17)</option>
-                  <option value="adult">Adult (18 – 64)</option>
-                  <option value="elderly">Elderly (65+)</option>
+                  <option value="adult">{t.virtualDoctor.adult}</option>
+                  <option value="child">{t.virtualDoctor.child}</option>
+                  <option value="elderly">{t.virtualDoctor.elderly}</option>
                 </select>
               </div>
 
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
-                  State in Nigeria
+                  {t.virtualDoctor.stateLabel}
                 </label>
                 <select
                   value={locationState}
@@ -353,7 +352,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
             {/* Emergency Warnings Checklist */}
             <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 space-y-2.5 text-xs">
               <span className="font-bold text-destructive uppercase tracking-wide block">
-                Emergency Flags & Exposure History:
+                {t.symptoms.urgentWarning}
               </span>
               <label className="flex items-start gap-2.5 cursor-pointer">
                 <input
@@ -363,7 +362,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                   className="rounded text-destructive focus:ring-destructive mt-0.5"
                 />
                 <span className="text-foreground">
-                  Direct contact with a suspected or confirmed Ebola patient, or attended a traditional burial.
+                  {t.virtualDoctor.exposureLabel}
                 </span>
               </label>
 
@@ -375,7 +374,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                   className="rounded text-destructive focus:ring-destructive mt-0.5"
                 />
                 <span className="text-foreground">
-                  Active bleeding from gums, nose, vomit, stool, or unusual large bruises.
+                  {t.virtualDoctor.bleedingLabel}
                 </span>
               </label>
 
@@ -387,7 +386,19 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                   className="rounded text-destructive focus:ring-destructive mt-0.5"
                 />
                 <span className="text-foreground">
-                  Severe shortness of breath or chest pain.
+                  {t.virtualDoctor.breathingLabel}
+                </span>
+              </label>
+
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hasAlteredConsciousness}
+                  onChange={(e) => setHasAlteredConsciousness(e.target.checked)}
+                  className="rounded text-destructive focus:ring-destructive mt-0.5"
+                />
+                <span className="text-foreground">
+                  {t.virtualDoctor.consciousnessLabel}
                 </span>
               </label>
             </div>
@@ -398,7 +409,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                 onClick={() => setStep('welcome')}
                 className="text-xs font-semibold text-muted-foreground hover:text-foreground"
               >
-                Back
+                {t.common.back}
               </button>
 
               <button
@@ -408,11 +419,11 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                 className="px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center gap-2"
               >
                 {isConsulting ? (
-                  <span>Analyzing Clinical Presentation...</span>
+                  <span>{t.virtualDoctor.analyzingText}</span>
                 ) : (
                   <>
                     <Stethoscope className="w-4 h-4" />
-                    <span>Evaluate Risk & Get Guidance</span>
+                    <span>{t.virtualDoctor.submitTriageBtn}</span>
                   </>
                 )}
               </button>
@@ -434,7 +445,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white ${
                   triageResult.level === 3 ? 'bg-destructive' : triageResult.level === 2 ? 'bg-amber-600' : 'bg-primary'
                 }`}>
-                  Triage Level {triageResult.level}: {triageResult.level_name}
+                  {triageResult.level === 3 ? t.virtualDoctor.level3Title : triageResult.level === 2 ? t.virtualDoctor.level2Title : t.virtualDoctor.level1Title}
                 </span>
 
                 {typeof window !== 'undefined' && 'speechSynthesis' in window && (
@@ -444,7 +455,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                     className="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs font-bold bg-card text-foreground px-3 py-1.5 rounded-lg border border-border"
                   >
                     {isSpeaking ? <VolumeX className="w-4 h-4 text-destructive" /> : <Volume2 className="w-4 h-4 text-primary" />}
-                    <span>{isSpeaking ? 'Stop Audio' : 'Listen Guidance'}</span>
+                    <span>{isSpeaking ? t.virtualDoctor.stopListenBtn : t.virtualDoctor.listenBtn}</span>
                   </button>
                 )}
               </div>
@@ -455,9 +466,9 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
 
               {triageResult.level === 3 && (
                 <div className="p-4 rounded-xl bg-destructive text-white text-xs sm:text-sm font-bold space-y-1">
-                  <p>🚨 EMERGENCY PROTOCOL:</p>
+                  <p>🚨 {t.common.emergency}:</p>
                   <p className="font-normal">
-                    Call NCDC Toll-Free <strong>6232</strong> immediately. If visiting a hospital, CALL AHEAD to explain your symptoms and possible exposure so healthcare workers can prepare protective isolation before you arrive.
+                    {t.virtualDoctor.callAheadNotice}
                   </p>
                 </div>
               )}
@@ -466,7 +477,7 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
             {/* Recommendations */}
             <div className="bg-card rounded-2xl p-6 sm:p-8 border border-border shadow-xs space-y-4">
               <h3 className="font-display font-bold text-base text-foreground">
-                Recommended Actions
+                {t.nav.getGuidance}
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {triageResult.recommended_actions.map((act, i) => (
@@ -481,18 +492,18 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
             {/* Contacts */}
             <div className="bg-card rounded-2xl p-6 border border-border space-y-4">
               <h3 className="font-display font-bold text-sm text-foreground">
-                Verified Emergency Hotline
+                {t.footer.emergencyContacts}
               </h3>
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-secondary/50">
                 <div>
-                  <span className="font-bold text-foreground text-sm block">NCDC Toll-Free 24/7 Hotline</span>
-                  <span className="text-xs text-muted-foreground">Free call on MTN, Airtel, Glo, 9mobile</span>
+                  <span className="font-bold text-foreground text-sm block">{t.common.emergencyCallText}</span>
+                  <span className="text-xs text-muted-foreground">MTN, Airtel, Glo, 9mobile</span>
                 </div>
                 <a
                   href="tel:6232"
                   className="px-5 py-2.5 rounded-xl bg-destructive text-white font-mono font-bold text-sm hover:bg-destructive/90 transition-colors"
                 >
-                  Call 6232
+                  {t.common.hotline}
                 </a>
               </div>
             </div>
@@ -502,13 +513,13 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
                 onClick={() => onSelectTab('find-help')}
                 className="px-4 py-2.5 rounded-xl bg-secondary text-foreground text-xs font-bold hover:bg-secondary/80 border border-border"
               >
-                Find Hospitals in {locationState}
+                {t.nav.facilities} ({locationState})
               </button>
               <button
                 onClick={handleReset}
                 className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90"
               >
-                New Assessment
+                {t.virtualDoctor.newConsultationBtn}
               </button>
             </div>
           </div>
@@ -517,3 +528,4 @@ export const VirtualDoctorPage: React.FC<VirtualDoctorPageProps> = ({
     </div>
   );
 };
+export default VirtualDoctorPage;

@@ -21,6 +21,8 @@ import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfUsePage } from './pages/TermsOfUsePage';
 import { AdminPortalPage } from './pages/AdminPortalPage';
 
+import { LanguageProvider, useTranslation } from './contexts/LanguageContext';
+
 import {
   HealthArticle,
   OutbreakUpdate,
@@ -50,9 +52,9 @@ import {
   isSupabaseConfigured
 } from './lib/supabase';
 
-export function App() {
+function AppContent() {
+  const { language, setLanguage } = useTranslation();
   const [currentTab, setCurrentTab] = useState<string>('home');
-  const [language, setLanguage] = useState<SupportedLanguage>('en');
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [selectedUpdateModal, setSelectedUpdateModal] = useState<OutbreakUpdate | null>(null);
 
@@ -335,4 +337,13 @@ export function App() {
     </div>
   );
 }
+
+export function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+}
+
 export default App;

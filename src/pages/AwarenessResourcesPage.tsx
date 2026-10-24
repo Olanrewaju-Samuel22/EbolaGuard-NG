@@ -3,18 +3,19 @@ import {
   FileText,
   Download,
   Globe,
-  Share2,
   CheckCircle,
   FileCheck
 } from 'lucide-react';
 import { AwarenessResource, SupportedLanguage } from '../types';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface AwarenessResourcesPageProps {
   resources: AwarenessResource[];
-  language: SupportedLanguage;
+  language?: SupportedLanguage;
 }
 
 export const AwarenessResourcesPage: React.FC<AwarenessResourcesPageProps> = ({ resources }) => {
+  const { t } = useTranslation();
   const [selectedLanguage, setSelectedLanguage] = useState<string>('all');
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
@@ -47,13 +48,13 @@ export const AwarenessResourcesPage: React.FC<AwarenessResourcesPageProps> = ({ 
         <div className="container mx-auto px-4 py-10 sm:py-12 max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary text-xs sm:text-sm font-medium mb-3">
             <FileText className="w-4 h-4" />
-            <span>Multilingual Community Awareness Repository</span>
+            <span>{t.resources.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3 bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">
-            Approved Awareness Resources & Handouts
+            {t.resources.title}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Download, print, and distribute official public health posters and factsheets across English, Nigerian Pidgin, Yorùbá, Hausa, and Igbo.
+            {t.resources.subtitle}
           </p>
         </div>
       </div>
@@ -63,9 +64,9 @@ export const AwarenessResourcesPage: React.FC<AwarenessResourcesPageProps> = ({ 
       {/* Language Filter */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <Globe className="w-4 h-4 text-gray-400 shrink-0" />
-        <span className="text-xs font-bold text-gray-500 uppercase shrink-0">Filter Language:</span>
+        <span className="text-xs font-bold text-gray-500 uppercase shrink-0">{t.common.filter}:</span>
         {[
-          { code: 'all', label: 'All Languages' },
+          { code: 'all', label: t.resources.langFilterAll },
           { code: 'en', label: 'English' },
           { code: 'yo', label: 'Yorùbá' },
           { code: 'ha', label: 'Hausa' },
@@ -112,7 +113,7 @@ export const AwarenessResourcesPage: React.FC<AwarenessResourcesPageProps> = ({ 
 
             <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
               <span className="text-[11px] text-gray-400">
-                Official NCDC Material
+                {t.common.verified} {t.common.official} NCDC
               </span>
 
               <button
@@ -123,12 +124,12 @@ export const AwarenessResourcesPage: React.FC<AwarenessResourcesPageProps> = ({ 
                 {downloadSuccess === item.id ? (
                   <>
                     <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Downloaded!</span>
+                    <span>{t.resources.downloadedSuccess}</span>
                   </>
                 ) : (
                   <>
                     <Download className="w-3.5 h-3.5" />
-                    <span>Download</span>
+                    <span>{t.common.download}</span>
                   </>
                 )}
               </button>

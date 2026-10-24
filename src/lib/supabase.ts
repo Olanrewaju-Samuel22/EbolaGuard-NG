@@ -821,7 +821,7 @@ export async function fetchLiveStatistics(): Promise<SupabaseFetchResult<Outbrea
 }
 
 export async function fetchLiveMisinformationReports(): Promise<SupabaseFetchResult<MisinformationReport[]>> {
-  const local = publicHealthStore.load('misinformation_reports', [
+  const local = publicHealthStore.load<MisinformationReport[]>('misinformation_reports', [
     {
       id: 'rep-1',
       report_category: 'fake_cure',

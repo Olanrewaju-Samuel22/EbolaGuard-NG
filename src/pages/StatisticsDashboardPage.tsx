@@ -12,17 +12,18 @@ import {
   Download,
   ShieldCheck,
   AlertCircle,
-  MapPin,
-  Calendar,
   FileSpreadsheet
 } from 'lucide-react';
-import { OutbreakStatistic } from '../types';
+import { OutbreakStatistic, SupportedLanguage } from '../types';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface StatisticsDashboardPageProps {
   statistics: OutbreakStatistic[];
+  language?: SupportedLanguage;
 }
 
 export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = ({ statistics }) => {
+  const { t } = useTranslation();
   const [selectedCountry, setSelectedCountry] = useState<string>('All');
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('2026');
 
@@ -96,13 +97,13 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
         <div className="container mx-auto px-4 py-10 sm:py-12 max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary text-xs sm:text-sm font-medium mb-3">
             <FileSpreadsheet className="w-4 h-4" />
-            <span>Epidemiological Intelligence & Surveillance Dashboard</span>
+            <span>{t.statistics.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3 bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">
-            Outbreak Statistics & Surveillance
+            {t.statistics.title}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Grounded epidemiological metrics strictly sourced from the Nigeria Centre for Disease Control (NCDC) and the World Health Organization. Distinguishes officially confirmed zeroes from unavailable data.
+            {t.statistics.subtitle}
           </p>
         </div>
       </div>
@@ -114,14 +115,14 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
         <div className="flex flex-wrap items-center gap-3">
           <div>
             <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500 block mb-1">
-              Geographic Filter
+              {t.statistics.geoFilter}
             </label>
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
               className="px-3 py-2 rounded-lg border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white focus:outline-none focus:border-[#18794E]"
             >
-              <option value="All">All Jurisdictions</option>
+              <option value="All">{t.common.all} (Jurisdictions)</option>
               <option value="Nigeria">Nigeria (36 States & FCT)</option>
               <option value="DRC">Democratic Republic of the Congo</option>
               <option value="Uganda">Uganda</option>
@@ -130,7 +131,7 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
 
           <div>
             <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500 block mb-1">
-              Surveillance Cycle
+              {t.statistics.timeframeFilter}
             </label>
             <select
               value={selectedTimeframe}
@@ -148,7 +149,7 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
           className="self-start sm:self-end px-4 py-2.5 rounded-lg bg-[#18794E] hover:bg-emerald-800 text-white font-bold text-xs inline-flex items-center gap-2 shadow-sm transition-all"
         >
           <Download className="w-4 h-4" />
-          <span>Download Verified CSV Dataset</span>
+          <span>{t.statistics.downloadBtn}</span>
         </button>
       </div>
 
@@ -156,72 +157,72 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Active Confirmed Cases (Nigeria)
+            {t.statistics.activeCasesTitle}
           </span>
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-extrabold text-[#18794E] font-mono tabular-nums">
               0
             </span>
-            <span className="text-xs font-medium text-emerald-700">active cases</span>
+            <span className="text-xs font-medium text-emerald-700">{t.home.metrics.activeCasesUnit}</span>
           </div>
           <p className="text-[11px] text-gray-500">
-            Current Status: Zero confirmed cases in 2026
+            {t.home.metrics.nationalStatus}
           </p>
           <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>NCDC Verified: 23 Oct 2026</span>
+            <span>NCDC {t.common.verified}: 23 Oct 2026</span>
           </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Total Fatalities (Nigeria)
+            {t.statistics.fatalitiesTitle}
           </span>
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-extrabold text-gray-900 font-mono tabular-nums">
               0
             </span>
-            <span className="text-xs font-medium text-gray-600">deaths</span>
+            <span className="text-xs font-medium text-gray-600">{t.home.metrics.fatalitiesUnit}</span>
           </div>
           <p className="text-[11px] text-gray-500">
-            Case Fatality Rate: 0.0%
+            CFR: 0.0% ({t.common.zeroCases})
           </p>
           <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>FMOH Official Record</span>
+            <span>FMOH {t.common.official} Record</span>
           </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Air & Land Border Screenings
+            {t.statistics.screeningsTitle}
           </span>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-[#0F766E] font-mono tabular-nums">
               142,850+
             </span>
-            <span className="text-xs font-medium text-teal-700">screened</span>
+            <span className="text-xs font-medium text-teal-700">{t.home.metrics.portScreenings}</span>
           </div>
           <p className="text-[11px] text-gray-500">
             Port Health Services at Lagos, Abuja & Kano
           </p>
           <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Port Health Surveillance</span>
+            <span>{t.home.metrics.borderStatus}</span>
           </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Regional High-Risk Alerts
+            {t.statistics.labsTitle}
           </span>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-extrabold text-[#123D32]">
-              Watch Mode
+              4 {t.home.metrics.labsUnit}
             </span>
           </div>
           <p className="text-[11px] text-gray-500">
-            Routine readiness across West & Central Africa
+            Lagos, Abuja, Edo, Asaba
           </p>
           <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
@@ -235,14 +236,14 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h2 className="text-xl font-bold text-[#1F2937]">
-              Points of Entry Screening Volume (2026 Trend)
+              {t.statistics.trendTitle}
             </h2>
             <span className="text-xs font-medium text-gray-500">
-              Unit: Individuals Screened · Source: Port Health Services / NCDC
+              Unit: Individuals Screened · {t.common.source}: Port Health Services / NCDC
             </span>
           </div>
           <p className="text-xs text-gray-600 mt-1">
-            Monthly passenger volume screened at international airports and maritime ports under heightened epidemic vigilance.
+            {t.home.metrics.borderStatus}
           </p>
         </div>
 
@@ -267,15 +268,15 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
           <div>
             <h2 className="text-xl font-bold text-[#1F2937]">
-              Nigeria State-by-State Surveillance Status (36 States & FCT)
+              {t.statistics.stateSurveillanceTitle}
             </h2>
             <p className="text-xs text-gray-600 mt-1">
-              Active epidemiological notification system status across all Nigerian subnational jurisdictions.
+              {t.home.stateTableSubtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Zero Active Transmission Reported Nationwide</span>
+            <span>{t.home.metrics.nationalStatus}</span>
           </div>
         </div>
 
@@ -289,13 +290,13 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
                 <span className="text-xs font-bold text-gray-800 truncate">
                   {state}
                 </span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500" title="Zero cases" />
+                <span className="w-2 h-2 rounded-full bg-emerald-500" title={t.common.zeroCases} />
               </div>
               <p className="text-[11px] text-gray-500 font-mono">
-                Confirmed: 0
+                {t.home.metrics.activeCases}: 0
               </p>
               <p className="text-[10px] text-emerald-700 font-medium">
-                Surveillance Active
+                {t.common.verified}
               </p>
             </div>
           ))}

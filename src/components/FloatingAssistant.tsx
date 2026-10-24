@@ -2,27 +2,47 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, PhoneCall, Minimize2, ExternalLink } from 'lucide-react';
 import { SupportedLanguage } from '../types';
 import { askHealthAssistant } from '../lib/ai-service';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface FloatingAssistantProps {
-  language: SupportedLanguage;
+  language?: SupportedLanguage;
   onOpenVirtualDoctor: () => void;
 }
 
 export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
-  language,
+  language: propLanguage,
   onOpenVirtualDoctor
 }) => {
+  const { language: ctxLanguage, t } = useTranslation();
+  const activeLanguage = propLanguage || ctxLanguage;
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'assistant'; text: string; time: string }>>([
     {
       sender: 'assistant',
-      text: 'Hello! I am the EbolaGuard AI Assistant. How can I assist you with Ebola information, symptoms, or prevention guidelines today?',
+      text: t.assistant.greeting,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Update greeting when language changes if only the initial greeting is present
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].sender === 'assistant') {
+        return [
+          {
+            sender: 'assistant',
+            text: t.assistant.greeting,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ];
+      }
+      return prev;
+    });
+  }, [activeLanguage, t.assistant.greeting]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -44,7 +64,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
     setIsLoading(true);
 
     try {
-      const res = await askHealthAssistant(text, language);
+      const res = await askHealthAssistant(text, activeLanguage);
       setMessages((prev) => [
         ...prev,
         {
@@ -58,7 +78,15 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
         ...prev,
         {
           sender: 'assistant',
-          text: 'Unable to reach the assistant right now. For emergency assistance in Nigeria, dial NCDC Toll-Free at 6232.',
+          text: activeLanguage === 'pcm'
+            ? 'Network dey slow small. For emergency help for Naija, call NCDC free line 6232.'
+            : activeLanguage === 'yo'
+            ? 'A kò lè kan olùrànlọ́wọ́ báyìí. Fún ìrànwọ́ pàjáwìrì ní Nàìjíríà, pe NCDC 6232 lọ́fẹ̀ẹ́.'
+            : activeLanguage === 'ha'
+            ? 'Ba a iya samun mataimaki a yanzu ba. Don taimakon gaggawa, kira NCDC kyauta a 6232.'
+            : activeLanguage === 'ig'
+            ? 'Enweghị ike iru onye enyemaka ugbu a. Maka enyemaka mberede, kpọọ NCDC n\'efu na 6232.'
+            : 'Unable to reach the assistant right now. For emergency assistance in Nigeria, dial NCDC Toll-Free at 6232.',
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
@@ -69,7 +97,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
 
   return (
     <>
-      {/* Floating Toggle Button (Component yh equivalent) */}
+      {/* Floating Toggle Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -91,7 +119,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-xs">EbolaGuard AI Assistant</h3>
+                <h3 className="font-bold text-xs">{t.assistant.title}</h3>
                 <span className="text-[10px] text-white/80">Active · NCDC Guidelines</span>
               </div>
             </div>
@@ -107,7 +135,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-1 rounded text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-                aria-label="Close"
+                aria-label={t.common.close}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -136,7 +164,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
             {isLoading && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground p-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span>Thinking...</span>
+                <span>{t.common.thinking}</span>
               </div>
             )}
           </div>
@@ -150,7 +178,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
               }}
               className="text-primary hover:underline font-semibold flex items-center gap-1"
             >
-              <span>Full Risk Checker</span>
+              <span>{t.assistant.fullCheckerBtn}</span>
               <ExternalLink className="w-3 h-3" />
             </button>
             <a
@@ -158,7 +186,7 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
               className="text-destructive hover:underline font-bold flex items-center gap-1"
             >
               <PhoneCall className="w-3 h-3" />
-              <span>NCDC: 6232</span>
+              <span>NCDC: {t.common.hotline}</span>
             </a>
           </div>
 
@@ -169,14 +197,14 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask an Ebola question..."
+              placeholder={t.assistant.inputPlaceholder}
               className="flex-1 px-3 py-2 rounded-xl border border-input text-xs bg-background focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <button
               onClick={handleSend}
               disabled={isLoading || !inputText.trim()}
               className="p-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
-              aria-label="Send"
+              aria-label={t.common.submit}
             >
               <Send className="w-3.5 h-3.5" />
             </button>
@@ -186,3 +214,4 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
     </>
   );
 };
+export default FloatingAssistant;

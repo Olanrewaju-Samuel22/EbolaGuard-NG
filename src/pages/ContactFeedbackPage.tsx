@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { AlertCircle, Send, CheckCircle2, ShieldAlert, Mail } from 'lucide-react';
-import { MisinformationReport } from '../types';
-
+import { MisinformationReport, SupportedLanguage } from '../types';
 import { submitMisinformationReport } from '../lib/supabase';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface ContactFeedbackPageProps {
   onSubmitReport: (report: Partial<MisinformationReport>) => void;
+  language?: SupportedLanguage;
 }
 
 export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubmitReport }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'misinformation' | 'contact'>('misinformation');
 
   // Misinformation form states
@@ -93,13 +95,13 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
         <div className="container mx-auto px-4 py-10 sm:py-12 max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary text-xs sm:text-sm font-medium mb-3">
             <ShieldAlert className="w-4 h-4" />
-            <span>Public Health Integrity & Community Reporting</span>
+            <span>{t.contact.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3 bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">
-            Report Misinformation & Contact Us
+            {t.contact.title}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Help public health epidemiologists identify dangerous health hoaxes, unverified viral remedies, or get in touch with the EbolaGuard NG coordination desk.
+            {t.contact.subtitle}
           </p>
         </div>
       </div>
@@ -117,7 +119,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
           }`}
         >
-          Report Health Rumour / Fake Remedy
+          {t.contact.tabMisinformation}
         </button>
         <button
           type="button"
@@ -128,7 +130,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
           }`}
         >
-          General Inquiries & Feedback
+          {t.contact.tabFeedback}
         </button>
       </div>
 
@@ -138,9 +140,9 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <span className="font-bold">Why Reporting Matters:</span>
+              <span className="font-bold">Public Health Integrity:</span>
               <p className="text-amber-900/90 leading-relaxed">
-                During previous viral outbreaks in Nigeria, false rumors like saltwater baths and bogus spiritual potions caused emergency hospital admissions. Our editorial fact-checkers verify and debunk reports against NCDC bulletins.
+                {t.contact.emergencyWarning}
               </p>
             </div>
           </div>
@@ -149,7 +151,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
             <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
               <div className="flex items-center gap-2 font-bold">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Thank you! Your report has been submitted to the public health fact-checking cell.</span>
+                <span>{t.common.success}! Report submitted.</span>
               </div>
               {submitNotice && (
                 <p className="text-[11px] text-emerald-800/90 pl-6">{submitNotice}</p>
@@ -160,54 +162,54 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
           <form onSubmit={handleMisinformationSubmit} className="space-y-5">
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
-                Category of Misinformation
+                {t.contact.categoryLabel}
               </label>
               <select
                 value={reportCategory}
                 onChange={(e) => setReportCategory(e.target.value as MisinformationReport['report_category'])}
                 className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white focus:outline-none focus:border-[#18794E]"
               >
-                <option value="fake_cure">Fake Remedy / Dangerous Cure (e.g. saltwater, bleach)</option>
-                <option value="false_case_claim">False Outbreak / Case Claim in a Nigerian City</option>
-                <option value="unauthorized_remedy">Unauthorized Herbal Concoction</option>
-                <option value="conspiracy">Conspiracy / Anti-Vaccine Rumour</option>
-                <option value="other">Other Misleading Information</option>
+                <option value="fake_cure">{t.contact.catFakeCure}</option>
+                <option value="false_case_claim">{t.contact.catFalseDeath}</option>
+                <option value="unauthorized_remedy">{t.contact.catHiddenCase}</option>
+                <option value="other">{t.contact.catOther}</option>
               </select>
             </div>
 
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
-                Link or Platform (Optional)
+                {t.contact.sourceUrlLabel}
               </label>
               <input
                 type="text"
                 value={reportedUrl}
                 onChange={(e) => setReportedUrl(e.target.value)}
-                placeholder="e.g. WhatsApp message, Facebook link, TikTok video, Twitter post..."
+                placeholder={t.contact.sourceUrlPlaceholder}
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-xs sm:text-sm focus:outline-none focus:border-[#18794E]"
               />
             </div>
 
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
-                Describe the Rumour / Claim *
+                {t.contact.descriptionLabel} *
               </label>
               <textarea
                 rows={4}
                 required
                 value={reportDescription}
                 onChange={(e) => setReportDescription(e.target.value)}
-                placeholder="What is being claimed? Who is spreading it? Why does it seem dangerous?"
+                placeholder={t.contact.descriptionPlaceholder}
                 className="w-full p-4 rounded-lg border border-gray-200 text-xs sm:text-sm focus:outline-none focus:border-[#18794E]"
               />
             </div>
 
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl bg-[#18794E] hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-sm transition-all inline-flex items-center gap-2"
+              disabled={isSubmitting}
+              className="px-6 py-3 rounded-xl bg-[#18794E] hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-sm transition-all inline-flex items-center gap-2 disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
-              <span>Submit Report for Fact-Checking</span>
+              <span>{isSubmitting ? t.common.submitting : t.contact.submitReportBtn}</span>
             </button>
           </form>
         </div>
@@ -219,7 +221,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
           {contactSuccess && (
             <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Message received! Our team will respond shortly.</span>
+              <span>{t.common.success}! Message received.</span>
             </div>
           )}
 
@@ -227,7 +229,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
-                  Your Name (Optional)
+                  {t.contact.nameLabel}
                 </label>
                 <input
                   type="text"
@@ -240,7 +242,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
 
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
-                  Email Address (Optional)
+                  {t.contact.emailLabel}
                 </label>
                 <input
                   type="email"
@@ -254,7 +256,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
 
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1.5">
-                Message / Inquiry *
+                {t.contact.messageLabel} *
               </label>
               <textarea
                 rows={4}
@@ -271,7 +273,7 @@ export const ContactFeedbackPage: React.FC<ContactFeedbackPageProps> = ({ onSubm
               className="px-6 py-3 rounded-xl bg-[#123D32] hover:bg-[#18794E] text-white font-bold text-xs sm:text-sm shadow-sm transition-all inline-flex items-center gap-2"
             >
               <Mail className="w-4 h-4" />
-              <span>Send Message</span>
+              <span>{t.contact.sendFeedbackBtn}</span>
             </button>
           </form>
         </div>

@@ -23,6 +23,7 @@ import {
   MisinformationReport,
   AuditLog
 } from '../types';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface AdminPortalPageProps {
   articles: HealthArticle[];
@@ -47,6 +48,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
   misinformationReports,
   onUpdateReports
 }) => {
+  const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState('admin@ebolaguard.ng');
   const [password, setPassword] = useState('');
@@ -184,10 +186,10 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
               <Lock className="w-6 h-6" />
             </div>
             <h1 className="text-2xl font-extrabold text-[#1F2937]">
-              Staff & Admin Portal
+              {t.admin.title}
             </h1>
             <p className="text-xs text-gray-500">
-              Authorized clinical editors and fact-checkers only.
+              {t.admin.subtitle}
             </p>
           </div>
 
@@ -200,7 +202,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1">
-                Staff Email
+                {t.admin.emailPlaceholder}
               </label>
               <input
                 type="email"
@@ -213,7 +215,7 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
 
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block mb-1">
-                Password
+                {t.admin.passwordPlaceholder}
               </label>
               <input
                 type="password"
@@ -229,12 +231,12 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
               type="submit"
               className="w-full py-3 rounded-xl bg-[#18794E] hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow transition-all active:scale-95"
             >
-              Sign In to Admin Dashboard
+              {t.admin.loginBtn}
             </button>
           </form>
 
           <div className="pt-2 text-center text-[11px] text-gray-400">
-            Official Developer Credit: Developed by OLANREWAJU SAMUEL
+            {t.developerCredit}
           </div>
         </div>
       </div>
@@ -248,14 +250,14 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold">
-              Admin & Public Health CMS
+              {t.admin.title}
             </h1>
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-800 text-emerald-200 border border-emerald-700">
               Super Admin
             </span>
           </div>
           <p className="text-xs text-emerald-200/80 mt-1">
-            Logged in as <span className="font-semibold text-white">{email}</span> · EbolaGuard NG Management
+            Logged in as <span className="font-semibold text-white">{email}</span> · {t.brandName}
           </p>
         </div>
 
@@ -264,20 +266,20 @@ export const AdminPortalPage: React.FC<AdminPortalPageProps> = ({
           className="self-start sm:self-auto px-4 py-2 rounded-lg bg-emerald-900/60 hover:bg-emerald-900 text-white text-xs font-semibold inline-flex items-center gap-2 border border-emerald-700/60 transition-colors"
         >
           <LogOut className="w-4 h-4" />
-          <span>Sign Out</span>
+          <span>{t.admin.logoutBtn}</span>
         </button>
       </div>
 
       {/* Tabs navigation */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-gray-200">
         {[
-          { id: 'overview', label: 'Overview & Status', icon: Server },
-          { id: 'articles', label: `Articles (${articles.length})`, icon: FileText },
-          { id: 'updates', label: `Outbreak Updates (${updates.length})`, icon: Activity },
-          { id: 'statistics', label: `Statistics (${statistics.length})`, icon: FileSpreadsheet },
-          { id: 'sources', label: `Official Sources (${sources.length})`, icon: CheckCircle },
-          { id: 'misinformation', label: `Misinformation (${misinformationReports.length})`, icon: ShieldAlert },
-          { id: 'monitoring', label: 'System Monitoring', icon: RefreshCw }
+          { id: 'overview', label: t.admin.tabOverview, icon: Server },
+          { id: 'articles', label: `${t.admin.tabArticles} (${articles.length})`, icon: FileText },
+          { id: 'updates', label: `${t.admin.tabUpdates} (${updates.length})`, icon: Activity },
+          { id: 'statistics', label: `${t.admin.tabStatistics} (${statistics.length})`, icon: FileSpreadsheet },
+          { id: 'sources', label: `${t.admin.tabSources} (${sources.length})`, icon: CheckCircle },
+          { id: 'misinformation', label: `${t.admin.tabReports} (${misinformationReports.length})`, icon: ShieldAlert },
+          { id: 'monitoring', label: t.admin.tabHealth, icon: RefreshCw }
         ].map((tab) => {
           const Icon = tab.icon;
           return (

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronUp, Search, PhoneCall } from 'lucide-react';
-import { FAQItem } from '../types';
+import { FAQItem, SupportedLanguage } from '../types';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface FAQPageProps {
   faqs: FAQItem[];
   onSelectTab: (tab: string) => void;
+  language?: SupportedLanguage;
 }
 
 export const FAQPage: React.FC<FAQPageProps> = ({ faqs, onSelectTab }) => {
+  const { t } = useTranslation();
   const [openIds, setOpenIds] = useState<string[]>([faqs[0]?.id || 'faq-1']);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -35,13 +38,13 @@ export const FAQPage: React.FC<FAQPageProps> = ({ faqs, onSelectTab }) => {
         <div className="container mx-auto px-4 py-10 sm:py-12 max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary text-xs sm:text-sm font-medium mb-3">
             <HelpCircle className="w-4 h-4" />
-            <span>Verified Public Health Inquiries</span>
+            <span>{t.faq.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3 bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">
-            Frequently Asked Questions
+            {t.faq.title}
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Clear, evidence-based answers to the most common questions Nigerians ask regarding Ebola transmission, home prevention, treatments, and vaccines.
+            {t.faq.subtitle}
           </p>
         </div>
       </div>
@@ -56,7 +59,7 @@ export const FAQPage: React.FC<FAQPageProps> = ({ faqs, onSelectTab }) => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search questions (e.g. saltwater, transmission, vaccine)..."
+            placeholder={t.faq.searchPlaceholder}
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-xs sm:text-sm focus:outline-none focus:border-[#18794E] bg-gray-50/50"
           />
         </div>
@@ -67,11 +70,12 @@ export const FAQPage: React.FC<FAQPageProps> = ({ faqs, onSelectTab }) => {
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-3 py-2.5 rounded-lg border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white focus:outline-none focus:border-[#18794E]"
           >
-            <option value="all">All Categories</option>
-            <option value="general">General Overview</option>
-            <option value="transmission">Transmission & Spread</option>
-            <option value="treatment">Treatment & Vaccines</option>
-            <option value="travel">Travel & Points of Entry</option>
+            <option value="all">{t.faq.catAll}</option>
+            <option value="general">{t.faq.catBasics}</option>
+            <option value="transmission">{t.faq.catTransmission}</option>
+            <option value="treatment">{t.faq.catMedical}</option>
+            <option value="prevention">{t.faq.catPrevention}</option>
+            <option value="myths">{t.faq.catMyths}</option>
           </select>
         </div>
       </div>
@@ -103,9 +107,9 @@ export const FAQPage: React.FC<FAQPageProps> = ({ faqs, onSelectTab }) => {
                   <p>{faq.answer}</p>
                   <div className="pt-2 flex items-center gap-2 text-[11px] text-gray-400">
                     <span className="uppercase tracking-wider font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">
-                      Category: {faq.category}
+                      {t.common.filter}: {faq.category}
                     </span>
-                    <span>· Verified Source: NCDC & WHO Protocol</span>
+                    <span>· {t.common.verified} {t.common.source}: NCDC & WHO Protocol</span>
                   </div>
                 </div>
               )}
@@ -118,10 +122,10 @@ export const FAQPage: React.FC<FAQPageProps> = ({ faqs, onSelectTab }) => {
       <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h3 className="text-base font-bold text-[#123D32]">
-            Didn't find what you are looking for?
+            {t.faq.calloutTitle}
           </h3>
           <p className="text-xs text-emerald-900/80">
-            Ask our AI Health Assistant for instant guidance, or call the NCDC 24/7 National Emergency Hotline.
+            {t.faq.calloutDesc}
           </p>
         </div>
 
@@ -130,14 +134,14 @@ export const FAQPage: React.FC<FAQPageProps> = ({ faqs, onSelectTab }) => {
             onClick={() => onSelectTab('assistant')}
             className="px-4 py-2.5 rounded-lg bg-[#18794E] hover:bg-emerald-800 text-white font-bold text-xs"
           >
-            Ask AI Health Assistant
+            {t.assistant.title}
           </button>
           <a
             href="tel:6232"
             className="px-4 py-2.5 rounded-lg bg-[#C62828] hover:bg-red-700 text-white font-bold text-xs inline-flex items-center gap-1.5"
           >
             <PhoneCall className="w-3.5 h-3.5" />
-            <span>Call 6232</span>
+            <span>{t.faq.callNcdcBtn}</span>
           </a>
         </div>
       </div>

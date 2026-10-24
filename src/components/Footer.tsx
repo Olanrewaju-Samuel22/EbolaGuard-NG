@@ -1,13 +1,16 @@
 import React from 'react';
 import { Shield, Heart, Globe2 } from 'lucide-react';
 import { SupportedLanguage } from '../types';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface FooterProps {
   onSelectTab: (tab: string) => void;
-  language: SupportedLanguage;
+  language?: SupportedLanguage;
 }
 
 export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-foreground text-background py-12 md:py-16 border-t border-border/20">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -24,19 +27,19 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
             </div>
 
             <p className="text-background/70 max-w-md text-sm md:text-base leading-relaxed">
-              AI-powered Ebola prevention and early risk detection platform for Nigeria. Helping Nigerian communities detect risk early, understand symptoms, prevent outbreaks, and access rapid medical guidance.
+              {t.footer.brandDescription}
             </p>
 
             <div className="flex items-center gap-2 text-xs md:text-sm text-background/60 pt-1">
               <Heart className="w-3.5 h-3.5 text-destructive fill-destructive" />
-              <span>Built with purpose for Nigerian and global health security</span>
+              <span>{t.footer.builtWithPurpose}</span>
             </div>
           </div>
 
           {/* Column: Platform Links */}
           <div>
             <h4 className="font-semibold mb-3 md:mb-4 text-sm uppercase tracking-wider text-background/80">
-              Platform
+              {t.footer.platformHeader}
             </h4>
             <ul className="space-y-2.5 text-background/70 text-sm">
               <li>
@@ -44,7 +47,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('virtual-doctor')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Risk Assessment (Virtual Doctor)
+                  {t.nav.riskAssessment}
                 </button>
               </li>
               <li>
@@ -52,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('prevention')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Prevention & Guidelines
+                  {t.nav.prevention}
                 </button>
               </li>
               <li>
@@ -60,7 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('updates')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Outbreak Updates
+                  {t.nav.updates}
                 </button>
               </li>
               <li>
@@ -68,7 +71,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('statistics')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Outbreak Statistics Dashboard
+                  {t.nav.dashboard}
                 </button>
               </li>
               <li>
@@ -76,7 +79,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('find-help')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Healthcare Facilities Directory
+                  {t.nav.facilities}
                 </button>
               </li>
               <li>
@@ -84,7 +87,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('admin')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Staff Portal Sign In
+                  {t.nav.admin}
                 </button>
               </li>
             </ul>
@@ -93,7 +96,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
           {/* Column: Legal & Ethics */}
           <div>
             <h4 className="font-semibold mb-3 md:mb-4 text-sm uppercase tracking-wider text-background/80">
-              Legal & Ethics
+              {t.footer.legalHeader}
             </h4>
             <ul className="space-y-2.5 text-background/70 text-sm">
               <li>
@@ -101,7 +104,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('privacy')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Privacy Policy
+                  {t.footer.privacyPolicy}
                 </button>
               </li>
               <li>
@@ -109,7 +112,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('terms')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Terms of Service & Disclaimer
+                  {t.footer.termsOfService}
                 </button>
               </li>
               <li>
@@ -117,7 +120,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('about-ebola')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Clinical Data Ethics
+                  {t.footer.clinicalEthics}
                 </button>
               </li>
               <li>
@@ -125,7 +128,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('emergency')}
                   className="hover:text-primary transition-colors text-left text-destructive font-medium"
                 >
-                  Emergency Contacts (6232)
+                  {t.footer.emergencyContacts}
                 </button>
               </li>
               <li>
@@ -133,18 +136,18 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                   onClick={() => onSelectTab('contact')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  Report Misinformation
+                  {t.footer.reportMisinfo}
                 </button>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar matching reference */}
+        {/* Bottom Bar */}
         <div className="border-t border-background/10 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
             <p className="text-xs md:text-sm text-background/60">
-              © 2026 EbolaGuard NG. All rights reserved. Not for medical diagnosis.
+              {t.footer.copyright}
             </p>
             <p className="text-xs md:text-sm text-background/70 mt-1">
               Developed by <span className="text-primary font-medium">OLANREWAJU SAMUEL</span>
@@ -154,7 +157,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
           <div className="flex items-center gap-4">
             <span className="text-xs md:text-sm text-background/60 flex items-center gap-2">
               <Globe2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent" />
-              <span>SDG 3 Aligned: Good Health and Well-being</span>
+              <span>{t.footer.sdgLabel}</span>
             </span>
           </div>
         </div>
@@ -162,3 +165,4 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
     </footer>
   );
 };
+export default Footer;

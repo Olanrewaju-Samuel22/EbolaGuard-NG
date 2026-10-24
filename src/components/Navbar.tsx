@@ -1,34 +1,44 @@
 import React, { useState } from 'react';
-import { Shield, Menu, X, PhoneCall, Globe, ChevronDown, Lock } from 'lucide-react';
+import { Shield, Menu, X, PhoneCall, ChevronDown, Lock } from 'lucide-react';
 import { SupportedLanguage } from '../types';
-import { TRANSLATIONS } from '../lib/translations';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface NavbarProps {
   currentTab: string;
   onSelectTab: (tab: string) => void;
-  language: SupportedLanguage;
-  onLanguageChange: (lang: SupportedLanguage) => void;
+  language?: SupportedLanguage;
+  onLanguageChange?: (lang: SupportedLanguage) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   onSelectTab,
-  language,
-  onLanguageChange
+  language: propLanguage,
+  onLanguageChange: propOnLanguageChange
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
-  const t = TRANSLATIONS[language];
+
+  const { language: ctxLanguage, setLanguage: ctxSetLanguage, t } = useTranslation();
+  const currentLanguage = propLanguage || ctxLanguage;
+
+  const handleLanguageChange = (code: SupportedLanguage) => {
+    if (propOnLanguageChange) {
+      propOnLanguageChange(code);
+    }
+    ctxSetLanguage(code);
+    setLangMenuOpen(false);
+  };
 
   const navItems = [
     { id: 'home', label: t.nav.home },
-    { id: 'virtual-doctor', label: 'Risk Assessment' },
+    { id: 'virtual-doctor', label: t.nav.riskAssessment },
     { id: 'prevention', label: t.nav.prevention },
-    { id: 'about-ebola', label: 'About' },
-    { id: 'updates', label: 'Outbreak Updates' },
-    { id: 'statistics', label: 'Dashboard' },
-    { id: 'find-help', label: 'Facilities' },
-    { id: 'emergency', label: 'Emergency', isEmergency: true }
+    { id: 'about-ebola', label: t.nav.about },
+    { id: 'updates', label: t.nav.updates },
+    { id: 'statistics', label: t.nav.dashboard },
+    { id: 'find-help', label: t.nav.facilities },
+    { id: 'emergency', label: t.nav.emergency, isEmergency: true }
   ];
 
   const languageLabels: Record<SupportedLanguage, { flag: string; label: string }> = {
@@ -98,8 +108,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
               aria-label="Select Language"
             >
-              <span>{languageLabels[language].flag}</span>
-              <span className="uppercase tracking-wide font-semibold">{language}</span>
+              <span>{languageLabels[currentLanguage]?.flag || '🇳🇬'}</span>
+              <span className="uppercase tracking-wide font-semibold">{currentLanguage}</span>
               <ChevronDown className="w-3 h-3 text-muted-foreground" />
             </button>
 
@@ -108,12 +118,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {(Object.keys(languageLabels) as SupportedLanguage[]).map((code) => (
                   <button
                     key={code}
-                    onClick={() => {
-                      onLanguageChange(code);
-                      setLangMenuOpen(false);
-                    }}
+                    onClick={() => handleLanguageChange(code)}
                     className={`w-full text-left px-3 py-2 rounded-lg flex items-center justify-between transition-colors ${
-                      language === code
+                      currentLanguage === code
                         ? 'bg-primary/10 text-primary font-bold'
                         : 'text-foreground hover:bg-secondary'
                     }`}
@@ -133,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
           >
             <Lock className="w-3.5 h-3.5" />
-            <span>Staff</span>
+            <span>{t.nav.staff}</span>
           </button>
 
           {/* Emergency Hotline CTA */}
@@ -142,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs font-bold transition-all shadow-xs active:scale-95 whitespace-nowrap"
           >
             <PhoneCall className="w-3.5 h-3.5 animate-pulse" />
-            <span>6232</span>
+            <span>{t.common.hotline}</span>
           </a>
 
           {/* Mobile hamburger menu toggle */}
@@ -180,10 +187,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNavClick('admin')}
               className="text-xs font-semibold text-muted-foreground hover:text-foreground"
             >
-              🔒 Staff & Admin Portal
+              🔒 {t.nav.admin}
             </button>
             <span className="text-[11px] text-muted-foreground">
-              NCDC Toll-Free: 6232
+              {t.common.emergencyCallText}
             </span>
           </div>
         </div>
@@ -191,3 +198,4 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+export default Navbar;
