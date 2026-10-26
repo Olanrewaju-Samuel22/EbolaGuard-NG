@@ -7,7 +7,9 @@ import {
   SUPABASE_ANON_KEY,
   supabaseConfigStatus,
   getSupabaseConfigStatus,
-  type SupabaseConfigStatus
+  getSafeDiagnostic,
+  type SupabaseConfigStatus,
+  type SafeDiagnostic
 } from './supabaseClient';
 import {
   HealthArticle,
@@ -30,7 +32,9 @@ export {
   SUPABASE_ANON_KEY,
   supabaseConfigStatus,
   getSupabaseConfigStatus,
-  type SupabaseConfigStatus
+  getSafeDiagnostic,
+  type SupabaseConfigStatus,
+  type SafeDiagnostic
 };
 
 // ==========================================

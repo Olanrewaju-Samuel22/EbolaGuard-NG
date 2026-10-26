@@ -249,6 +249,22 @@ Analyze this clinical presentation and return a JSON object with:
   }
 });
 
+// Public Supabase configuration endpoint (safely provides project URL and publishable key; NEVER secret keys)
+app.get('/api/supabase-config', (_req: Request, res: Response) => {
+  const url = (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '').trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+  const rawKey = (process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '').trim();
+  const isSecret = rawKey.startsWith('sb_secret_') || rawKey.includes('service_role');
+  const publishableKey = isSecret ? '' : rawKey;
+
+  res.json({
+    url,
+    publishableKey,
+    hasUrl: Boolean(url),
+    hasPublishableKey: Boolean(publishableKey),
+    isSecretKeyBlocked: isSecret
+  });
+});
+
 // System monitoring endpoint
 app.get('/api/system-status', async (_req: Request, res: Response) => {
   const startTime = Date.now();

@@ -82,6 +82,40 @@ export const supabaseConfigStatus = getSupabaseConfigStatus();
 
 export const isSupabaseConfigured = supabaseConfigStatus.isConfigured;
 
+export interface SafeDiagnostic {
+  hasUrl: boolean;
+  hasPublishableKey: boolean;
+  isConfigured: boolean;
+  isSecretKeyBlocked: boolean;
+  missingVariables: ('VITE_SUPABASE_URL' | 'VITE_SUPABASE_ANON_KEY')[];
+}
+
+/**
+ * Safe diagnostic that reports whether the URL and publishable key are present
+ * without exposing or printing any portion of their values.
+ */
+export function getSafeDiagnostic(): SafeDiagnostic {
+  const status = getSupabaseConfigStatus();
+  return {
+    hasUrl: status.hasUrl,
+    hasPublishableKey: status.hasKey,
+    isConfigured: status.isConfigured,
+    isSecretKeyBlocked: status.isSecretKeyBlocked,
+    missingVariables: status.missingVariables,
+  };
+}
+
+// Log safe diagnostic on client startup
+if (typeof window !== 'undefined') {
+  const diag = getSafeDiagnostic();
+  console.info('[EbolaGuard NG Diagnostics]', {
+    supabaseUrlPresent: diag.hasUrl,
+    publishableKeyPresent: diag.hasPublishableKey,
+    isConfigured: diag.isConfigured,
+    missingVariables: diag.missingVariables,
+  });
+}
+
 // Initialize Supabase client strictly with the publishable key
 export const supabaseClient: SupabaseClient | null = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
