@@ -12,14 +12,20 @@ interface AuthContextType {
   configStatus: SupabaseConfigStatus;
   error: string | null;
   clearError: () => void;
+  authEvent: 'confirmed' | 'recovery' | 'expired' | null;
+  authNotice: string | null;
+  clearAuthNotice: () => void;
   signInWithEmail: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signUpWithEmail: (email: string, password: string, fullName: string) => Promise<{
     success: boolean;
     error?: string;
     emailConfirmationRequired?: boolean;
+    registeredEmail?: string;
   }>;
+  resendConfirmationEmail: (email: string) => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
+  updatePassword: (newPassword: string) => Promise<{ success: boolean; error?: string }>;
   updateProfile: (updates: { full_name?: string; phone_number?: string; state?: string }) => Promise<{
     success: boolean;
     error?: string;
@@ -36,8 +42,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [authEvent, setAuthEvent] = useState<'confirmed' | 'recovery' | 'expired' | null>(null);
+  const [authNotice, setAuthNotice] = useState<string | null>(null);
 
   const clearError = () => setError(null);
+  const clearAuthNotice = () => {
+    setAuthNotice(null);
+    setAuthEvent(null);
+  };
 
   // Helper to load or construct profile from User object + metadata + database
   const loadUserProfile = async (authUser: User) => {
@@ -84,6 +96,33 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
+    // 0. Parse URL hash & query string for auth callbacks or errors
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace(/^#/, '');
+      const hashParams = new URLSearchParams(hash);
+      const searchParams = new URLSearchParams(window.location.search);
+
+      const hashType = hashParams.get('type');
+      const authEventQuery = searchParams.get('auth_event');
+      const hashError = hashParams.get('error_description') || searchParams.get('error_description') || hashParams.get('error');
+
+      if (hashError) {
+        const decoded = decodeURIComponent(hashError.replace(/\+/g, ' '));
+        const isExpired = decoded.toLowerCase().includes('expired') || decoded.toLowerCase().includes('invalid');
+        setAuthEvent(isExpired ? 'expired' : null);
+        setError(decoded);
+        // Clean fragment without reloading
+        window.history.replaceState(null, '', window.location.pathname);
+      } else if (authEventQuery === 'confirmed' || hashType === 'signup') {
+        setAuthEvent('confirmed');
+        setAuthNotice('Your email address has been verified successfully! Welcome to EbolaGuard NG.');
+        window.history.replaceState(null, '', window.location.pathname);
+      } else if (authEventQuery === 'recovery' || hashType === 'recovery') {
+        setAuthEvent('recovery');
+        setAuthNotice('Password reset session authorized. Please enter and save your new password below.');
+      }
+    }
+
     if (!supabaseClient || !isSupabaseConfigured) {
       setLoading(false);
       return;
@@ -110,10 +149,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // 2. Auth State Change Listener
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(
-      async (_event, currentSession) => {
+      async (event, currentSession) => {
         if (!isMounted) return;
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
+
+        if (event === 'PASSWORD_RECOVERY') {
+          setAuthEvent('recovery');
+          setAuthNotice('Password reset session verified. Enter your new password below.');
+        } else if (event === 'SIGNED_IN') {
+          // If signed in, keep session active
+        }
 
         if (currentSession?.user) {
           await loadUserProfile(currentSession.user);
@@ -179,7 +225,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     email: string,
     password: string,
     fullName: string
-  ): Promise<{ success: boolean; error?: string; emailConfirmationRequired?: boolean }> => {
+  ): Promise<{ success: boolean; error?: string; emailConfirmationRequired?: boolean; registeredEmail?: string }> => {
     setError(null);
 
     if (!supabaseClient || !isSupabaseConfigured) {
@@ -192,6 +238,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const trimmedEmail = email.trim();
       const trimmedName = fullName.trim();
+      const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
       const { data, error: signUpErr } = await supabaseClient.auth.signUp({
         email: trimmedEmail,
@@ -200,7 +247,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           data: {
             full_name: trimmedName,
             display_name: trimmedName
-          }
+          },
+          emailRedirectTo: siteUrl ? `${siteUrl}?auth_event=confirmed` : undefined
         }
       });
 
@@ -248,7 +296,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return {
         success: true,
-        emailConfirmationRequired: requiresConfirmation
+        emailConfirmationRequired: requiresConfirmation,
+        registeredEmail: trimmedEmail
       };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Network error during registration.';
@@ -257,7 +306,45 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // 3. Sign Out
+  // 3. Resend Confirmation Email
+  const resendConfirmationEmail = async (email: string): Promise<{ success: boolean; error?: string }> => {
+    setError(null);
+
+    if (!supabaseClient || !isSupabaseConfigured) {
+      const status = getSupabaseConfigStatus();
+      const msg = status.errorMessage || 'Supabase credentials are not configured in your environment.';
+      setError(msg);
+      return { success: false, error: msg };
+    }
+
+    try {
+      const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+      const { error: resendErr } = await supabaseClient.auth.resend({
+        type: 'signup',
+        email: email.trim(),
+        options: {
+          emailRedirectTo: siteUrl ? `${siteUrl}?auth_event=confirmed` : undefined
+        }
+      });
+
+      if (resendErr) {
+        let friendlyMsg = resendErr.message;
+        if (resendErr.message.includes('rate limit') || resendErr.message.includes('security purposes')) {
+          friendlyMsg = 'Please wait at least 60 seconds before requesting another confirmation email.';
+        }
+        setError(friendlyMsg);
+        return { success: false, error: friendlyMsg };
+      }
+
+      return { success: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to resend confirmation email.';
+      setError(msg);
+      return { success: false, error: msg };
+    }
+  };
+
+  // 4. Sign Out
   const signOut = async (): Promise<void> => {
     setError(null);
     if (supabaseClient) {
@@ -270,9 +357,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setSession(null);
     setUser(null);
     setProfile(null);
+    setAuthEvent(null);
+    setAuthNotice(null);
   };
 
-  // 4. Reset Password
+  // 5. Reset Password Request
   const resetPassword = async (email: string): Promise<{ success: boolean; error?: string }> => {
     setError(null);
 
@@ -284,9 +373,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
-      const redirectUrl = typeof window !== 'undefined' ? `${window.location.origin}` : undefined;
+      const siteUrl = typeof window !== 'undefined' ? `${window.location.origin}` : undefined;
       const { error: resetErr } = await supabaseClient.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: redirectUrl
+        redirectTo: siteUrl ? `${siteUrl}?auth_event=recovery` : undefined
       });
 
       if (resetErr) {
@@ -302,7 +391,38 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // 5. Update Profile
+  // 6. Update Password (for recovery flow)
+  const updatePassword = async (newPassword: string): Promise<{ success: boolean; error?: string }> => {
+    setError(null);
+
+    if (!supabaseClient || !isSupabaseConfigured) {
+      const status = getSupabaseConfigStatus();
+      const msg = status.errorMessage || 'Supabase credentials are not configured.';
+      setError(msg);
+      return { success: false, error: msg };
+    }
+
+    try {
+      const { error: updateErr } = await supabaseClient.auth.updateUser({
+        password: newPassword
+      });
+
+      if (updateErr) {
+        setError(updateErr.message);
+        return { success: false, error: updateErr.message };
+      }
+
+      setAuthEvent(null);
+      setAuthNotice('Your password has been successfully updated! You are now securely logged in.');
+      return { success: true };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to update password.';
+      setError(msg);
+      return { success: false, error: msg };
+    }
+  };
+
+  // 7. Update Profile
   const updateProfile = async (updates: {
     full_name?: string;
     phone_number?: string;
@@ -363,13 +483,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       configStatus: supabaseConfigStatus,
       error,
       clearError,
+      authEvent,
+      authNotice,
+      clearAuthNotice,
       signInWithEmail,
       signUpWithEmail,
+      resendConfirmationEmail,
       signOut,
       resetPassword,
+      updatePassword,
       updateProfile
     }),
-    [user, session, profile, loading, error]
+    [user, session, profile, loading, error, authEvent, authNotice]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

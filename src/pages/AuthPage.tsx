@@ -11,13 +11,19 @@ import {
   CheckCircle2,
   Info,
   PhoneCall,
-  ChevronLeft
+  ChevronLeft,
+  RefreshCw,
+  Send,
+  Sparkles,
+  Inbox
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../contexts/LanguageContext';
 
+export type AuthMode = 'signin' | 'signup' | 'forgot-password' | 'confirm-email' | 'update-password';
+
 interface AuthPageProps {
-  initialMode?: 'signin' | 'signup' | 'forgot-password';
+  initialMode?: AuthMode;
   onSuccessRedirect?: (targetTab: string) => void;
   onNavigateTab: (tab: string) => void;
 }
@@ -31,15 +37,20 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const {
     signInWithEmail,
     signUpWithEmail,
+    resendConfirmationEmail,
     resetPassword,
+    updatePassword,
     user,
     error,
     clearError,
+    authEvent,
+    authNotice,
+    clearAuthNotice,
     isConfigured,
     configStatus
   } = useAuth();
 
-  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot-password'>(initialMode);
+  const [mode, setMode] = useState<AuthMode>(initialMode);
 
   // Form States
   const [email, setEmail] = useState('');
@@ -48,26 +59,63 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [fullName, setFullName] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
 
+  // Recovery States
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+  // Email Confirmation & Resend States
+  const [registeredEmail, setRegisteredEmail] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState<string | null>(null);
+
   // UI States
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [confirmationNotice, setConfirmationNotice] = useState<string | null>(null);
+
+  // Cooldown timer interval for resend confirmation email
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   // Sync mode if initialMode prop changes
   useEffect(() => {
     setMode(initialMode);
     setFormError(null);
     setSuccessMessage(null);
-    setConfirmationNotice(null);
     clearError();
-  }, [initialMode]);
+  }, [initialMode, clearError]);
 
-  // If already logged in, show redirection option
+  // Handle incoming auth callback events (e.g. from confirmation link or password recovery)
   useEffect(() => {
-    if (user && mode !== 'forgot-password') {
+    if (authEvent === 'recovery') {
+      setMode('update-password');
+      setFormError(null);
+    } else if (authEvent === 'confirmed') {
+      setSuccessMessage('Email verified successfully! Welcome to EbolaGuard NG.');
+      if (onSuccessRedirect) {
+        const timer = setTimeout(() => {
+          onSuccessRedirect('account');
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
+    } else if (authEvent === 'expired') {
+      setFormError('Your email confirmation or reset link has expired or has already been used. Please request a new one below.');
+    }
+  }, [authEvent, onSuccessRedirect]);
+
+  // If already logged in, redirect to intended tab (unless in recovery/update-password mode)
+  useEffect(() => {
+    if (user && mode !== 'update-password' && mode !== 'forgot-password') {
       if (onSuccessRedirect) {
         onSuccessRedirect('account');
       }
@@ -78,20 +126,71 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
   };
 
+  const handleResendConfirmation = async (targetEmail?: string) => {
+    const emailToUse = targetEmail || registeredEmail || email;
+    if (!emailToUse || !validateEmail(emailToUse)) {
+      setFormError('Please provide a valid email address to resend confirmation.');
+      return;
+    }
+
+    if (resendCooldown > 0) return;
+
+    setIsResending(true);
+    setFormError(null);
+    setResendSuccess(null);
+
+    const res = await resendConfirmationEmail(emailToUse);
+    setIsResending(false);
+
+    if (res.success) {
+      setResendSuccess(`Verification link resent to ${emailToUse}! Please check your inbox and spam folder.`);
+      setResendCooldown(60);
+    } else {
+      setFormError(res.error || 'Failed to resend confirmation email. Please try again shortly.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
     setSuccessMessage(null);
-    setConfirmationNotice(null);
+    setResendSuccess(null);
     clearError();
+    clearAuthNotice();
 
-    // 1. Email validation
+    // 1. Mode: Update Password (from recovery email)
+    if (mode === 'update-password') {
+      if (!newPassword || newPassword.length < 6) {
+        setFormError('New password must be at least 6 characters long.');
+        return;
+      }
+      if (newPassword !== confirmNewPassword) {
+        setFormError('Passwords do not match. Please ensure both passwords match.');
+        return;
+      }
+
+      setIsSubmitting(true);
+      const res = await updatePassword(newPassword);
+      setIsSubmitting(false);
+
+      if (res.success) {
+        setSuccessMessage('Password updated successfully! Redirecting to your dashboard...');
+        if (onSuccessRedirect) {
+          setTimeout(() => onSuccessRedirect('account'), 1500);
+        }
+      } else {
+        setFormError(res.error || 'Failed to update password. Please try requesting a new reset link.');
+      }
+      return;
+    }
+
+    // 2. Email validation for all other modes
     if (!email || !validateEmail(email)) {
       setFormError(t.auth?.emailRequiredError || 'Please provide a valid email address.');
       return;
     }
 
-    // 2. Mode: Forgot Password
+    // 3. Mode: Forgot Password
     if (mode === 'forgot-password') {
       setIsSubmitting(true);
       const res = await resetPassword(email);
@@ -100,7 +199,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       if (res.success) {
         setSuccessMessage(
           t.auth?.resetEmailSent ||
-            'Password reset link has been dispatched! Please check your email inbox.'
+            'Password reset instructions have been dispatched! Please check your email inbox and spam folder.'
         );
       } else {
         setFormError(res.error || 'Failed to dispatch reset email. Please verify your address.');
@@ -108,7 +207,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       return;
     }
 
-    // 3. Mode: Create Account
+    // 4. Mode: Create Account
     if (mode === 'signup') {
       if (!fullName.trim()) {
         setFormError(t.auth?.nameRequiredError || 'Please enter your full name.');
@@ -129,10 +228,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
       if (res.success) {
         if (res.emailConfirmationRequired) {
-          setConfirmationNotice(
-            t.auth?.emailConfirmNotice ||
-              'Account created! If email confirmation is enabled on your Supabase project, please check your inbox to confirm your address before signing in.'
-          );
+          setRegisteredEmail(res.registeredEmail || email.trim());
+          setMode('confirm-email');
+          setResendCooldown(60);
         } else {
           setSuccessMessage(t.auth?.registrationSuccess || 'Account registered successfully!');
           if (onSuccessRedirect) {
@@ -145,7 +243,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       return;
     }
 
-    // 4. Mode: Sign In
+    // 5. Mode: Sign In
     if (mode === 'signin') {
       if (!password) {
         setFormError('Please enter your password.');
@@ -170,6 +268,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }
   };
 
+  const isEmailUnconfirmedError = (formError || error)?.includes('not been confirmed') || (formError || error)?.includes('Email not confirmed');
+
   return (
     <div className="py-10 sm:py-16 px-4">
       <div className="max-w-md mx-auto space-y-6">
@@ -189,7 +289,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           <p className="leading-relaxed">
             <span className="font-bold">Public Health Notice: </span>
             {t.auth?.publicNotice ||
-              'Emergency guidance, outbreak statistics, and the Risk Assessment tool are 100% public and free without logging in.'}
+              'Emergency guidance, outbreak statistics, and the Risk Assessment triage tool are 100% public and free without logging in.'}
           </p>
         </div>
 
@@ -204,16 +304,20 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               {mode === 'signin' && (t.auth?.signInTitle || 'Sign In to EbolaGuard NG')}
               {mode === 'signup' && (t.auth?.signUpTitle || 'Create an EbolaGuard Account')}
               {mode === 'forgot-password' && (t.auth?.forgotTitle || 'Recover Your Password')}
+              {mode === 'confirm-email' && 'Verify Your Email Address'}
+              {mode === 'update-password' && 'Set New Password'}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
               {mode === 'signin' && (t.auth?.signInSubtitle || 'Access personalized public health resources and manage state alert preferences.')}
               {mode === 'signup' && (t.auth?.signUpSubtitle || 'Join Nigerians staying protected with verified disease bulletins, risk screening, and emergency directories.')}
               {mode === 'forgot-password' && (t.auth?.forgotSubtitle || 'Enter your registered email address to receive password recovery instructions.')}
+              {mode === 'confirm-email' && 'An activation link has been dispatched to complete your registration.'}
+              {mode === 'update-password' && 'Enter your new secure password below to regain full account access.'}
             </p>
           </div>
 
           {/* Mode Switcher Tabs (Sign In / Register) */}
-          {mode !== 'forgot-password' && (
+          {(mode === 'signin' || mode === 'signup') && (
             <div className="grid grid-cols-2 p-1 bg-secondary rounded-xl text-xs font-semibold">
               <button
                 type="button"
@@ -225,7 +329,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 }}
                 className={`py-2 rounded-lg transition-all cursor-pointer ${
                   mode === 'signin'
-                    ? 'bg-card text-foreground shadow-xs'
+                    ? 'bg-card text-foreground shadow-xs font-bold'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -241,7 +345,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 }}
                 className={`py-2 rounded-lg transition-all cursor-pointer ${
                   mode === 'signup'
-                    ? 'bg-card text-foreground shadow-xs'
+                    ? 'bg-card text-foreground shadow-xs font-bold'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -273,14 +377,41 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             </div>
           )}
 
+          {/* Auth Notice (e.g. email verified celebration) */}
+          {authNotice && (
+            <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
+              <div className="space-y-1">
+                <p className="font-semibold">{authNotice}</p>
+              </div>
+            </div>
+          )}
+
           {/* Error Message Alert */}
           {(formError || error) && (
-            <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <span className="font-bold">Error: </span>
-                <span>{formError || error}</span>
+            <div className="p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-bold">Error: </span>
+                  <span>{formError || error}</span>
+                </div>
               </div>
+
+              {/* Special action if error is unconfirmed email */}
+              {isEmailUnconfirmedError && (
+                <div className="pt-1 border-t border-destructive/20 flex items-center justify-between">
+                  <span className="text-[11px] font-medium text-destructive/80">Need a fresh link?</span>
+                  <button
+                    type="button"
+                    disabled={isResending || resendCooldown > 0}
+                    onClick={() => handleResendConfirmation(email)}
+                    className="text-[11px] font-bold underline hover:opacity-80 disabled:opacity-50 cursor-pointer"
+                  >
+                    {isResending ? 'Sending...' : resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend confirmation email →'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -292,185 +423,340 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             </div>
           )}
 
-          {/* Email Confirmation Notice Alert */}
-          {confirmationNotice && (
-            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs flex items-start gap-2.5">
-              <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
-              <div className="space-y-2">
-                <p className="font-semibold">{confirmationNotice}</p>
+          {/* Resend Confirmation Success Alert */}
+          {resendSuccess && (
+            <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs flex items-start gap-2.5">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>{resendSuccess}</span>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* SPECIAL VIEW: DEDICATED EMAIL CONFIRMATION SCREEN        */}
+          {/* ======================================================== */}
+          {mode === 'confirm-email' && (
+            <div className="space-y-5 animate-in fade-in-50">
+              {/* Highlight Card */}
+              <div className="p-5 rounded-2xl bg-secondary/80 border border-border/80 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
+                  <Inbox className="w-6 h-6 animate-bounce" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-foreground">Check your inbox</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">We sent a verification email to:</p>
+                  <div className="inline-block px-3 py-1 mt-2 rounded-lg bg-card border border-border font-mono text-xs font-bold text-primary">
+                    {registeredEmail || email || 'your email address'}
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed pt-1">
+                  Click the confirmation button in the email to activate your account. Confirmation links will bring you straight back to EbolaGuard NG.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2.5">
+                <button
+                  type="button"
+                  disabled={isResending || resendCooldown > 0}
+                  onClick={() => handleResendConfirmation(registeredEmail || email)}
+                  className="w-full py-2.5 px-4 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary font-bold text-xs shadow-2xs transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isResending ? 'animate-spin' : ''}`} />
+                  <span>
+                    {isResending
+                      ? 'Dispatching verification link...'
+                      : resendCooldown > 0
+                      ? `Resend confirmation link (${resendCooldown}s)`
+                      : 'Resend confirmation email'}
+                  </span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => {
                     setMode('signin');
-                    setConfirmationNotice(null);
+                    setFormError(null);
+                    setSuccessMessage(null);
+                    setResendSuccess(null);
                   }}
-                  className="font-bold underline cursor-pointer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Proceed to Sign In →
+                  <span>Return to Sign In</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Helpful spam notice */}
+              <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-[11px] text-muted-foreground text-center space-y-1">
+                <p className="font-semibold text-foreground">Can&apos;t find the email?</p>
+                <p>Check your Spam, Junk, or Promotions folder. It usually arrives within 1-2 minutes.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('signup');
+                    setFormError(null);
+                    setSuccessMessage(null);
+                  }}
+                  className="font-bold text-primary hover:underline cursor-pointer block mx-auto pt-1"
+                >
+                  Change email address
                 </button>
               </div>
             </div>
           )}
 
-          {/* The Active Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Full Name (Sign Up only) */}
-            {mode === 'signup' && (
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <UserIcon className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span>{t.auth?.fullNameLabel || 'Full Name'}</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder={t.auth?.fullNamePlaceholder || 'e.g. Dr. Amina Bello'}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
-            )}
-
-            {/* Email Address */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-muted-foreground" />
-                <span>{t.auth?.emailLabel || 'Email Address'}</span>
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.auth?.emailPlaceholder || 'you@example.com'}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-
-            {/* Password (for Sign In & Sign Up) */}
-            {mode !== 'forgot-password' && (
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-muted-foreground" />
-                    <span>{t.auth?.passwordLabel || 'Password'}</span>
-                  </label>
-                  {mode === 'signin' && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMode('forgot-password');
-                        setFormError(null);
-                        setSuccessMessage(null);
-                        clearError();
-                      }}
-                      className="text-xs font-medium text-primary hover:underline cursor-pointer"
-                    >
-                      {t.auth?.forgotPasswordLink || 'Forgot Password?'}
-                    </button>
-                  )}
-                </div>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder={t.auth?.passwordPlaceholder || 'Enter your password'}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Confirm Password (Sign Up only) */}
-            {mode === 'signup' && (
+          {/* ======================================================== */}
+          {/* SPECIAL VIEW: UPDATE PASSWORD (FROM RECOVERY CALLBACK)   */}
+          {/* ======================================================== */}
+          {mode === 'update-password' && (
+            <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in-50">
+              {/* New Password */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <Lock className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span>{t.auth?.confirmPasswordLabel || 'Confirm Password'}</span>
+                  <span>New Password</span>
                 </label>
                 <div className="relative">
                   <input
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    type={showNewPassword ? 'text' : 'password'}
                     required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder={t.auth?.confirmPasswordPlaceholder || 'Re-enter your password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter at least 6 characters"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary pr-10"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    onClick={() => setShowNewPassword(!showNewPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
-                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showNewPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+              </div>
 
-                {/* Password strength / match indicator */}
-                <div className="text-[11px] text-muted-foreground space-y-0.5 pt-1">
-                  <p className={password.length >= 6 ? 'text-primary font-medium' : 'text-muted-foreground'}>
-                    • {t.auth?.passwordRequirements || 'Password must be at least 6 characters long.'}
-                  </p>
-                  {confirmPassword && (
-                    <p className={password === confirmPassword ? 'text-primary font-medium' : 'text-destructive font-medium'}>
-                      • {password === confirmPassword ? 'Passwords match' : (t.auth?.passwordMatchError || 'Passwords do not match')}
-                    </p>
-                  )}
+              {/* Confirm New Password */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span>Confirm New Password</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmNewPassword ? 'text' : 'password'}
+                    required
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    placeholder="Re-enter your new password"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                    aria-label={showConfirmNewPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showConfirmNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
-            )}
 
-            {/* Remember Me Option (Sign In only) */}
-            {mode === 'signin' && (
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="remember-me"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer"
-                />
-                <label htmlFor="remember-me" className="text-xs text-muted-foreground cursor-pointer select-none">
-                  {t.auth?.rememberMe || 'Remember my session'}
-                </label>
+              {/* Password Match / Strength Indicator */}
+              <div className="text-[11px] text-muted-foreground space-y-0.5 pt-1">
+                <p className={newPassword.length >= 6 ? 'text-primary font-medium' : 'text-muted-foreground'}>
+                  • Password must be at least 6 characters long.
+                </p>
+                {confirmNewPassword && (
+                  <p className={newPassword === confirmNewPassword ? 'text-primary font-medium' : 'text-destructive font-medium'}>
+                    • {newPassword === confirmNewPassword ? 'Passwords match' : 'Passwords do not match'}
+                  </p>
+                )}
               </div>
-            )}
 
-            {/* Submit CTA Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer mt-2"
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                  <span>{t.common.loading || 'Processing...'}</span>
-                </>
-              ) : (
-                <>
-                  <span>
-                    {mode === 'signin' && (t.auth?.signIn || 'Sign In')}
-                    {mode === 'signup' && (t.auth?.createAccount || 'Create Account')}
-                    {mode === 'forgot-password' && (t.auth?.resetPasswordBtn || 'Send Password Reset Email')}
-                  </span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer mt-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    <span>Saving new password...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Save & Sign In</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* ======================================================== */}
+          {/* STANDARD AUTH FORMS (SIGN IN / SIGN UP / FORGOT PW)      */}
+          {/* ======================================================== */}
+          {mode !== 'confirm-email' && mode !== 'update-password' && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Full Name (Sign Up only) */}
+              {mode === 'signup' && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <UserIcon className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span>{t.auth?.fullNameLabel || 'Full Name'}</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={t.auth?.fullNamePlaceholder || 'e.g. Dr. Amina Bello'}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                </div>
               )}
-            </button>
-          </form>
+
+              {/* Email Address */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span>{t.auth?.emailLabel || 'Email Address'}</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t.auth?.emailPlaceholder || 'you@example.com'}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              {/* Password (for Sign In & Sign Up) */}
+              {mode !== 'forgot-password' && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+                      <span>{t.auth?.passwordLabel || 'Password'}</span>
+                    </label>
+                    {mode === 'signin' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode('forgot-password');
+                          setFormError(null);
+                          setSuccessMessage(null);
+                          clearError();
+                        }}
+                        className="text-xs font-medium text-primary hover:underline cursor-pointer"
+                      >
+                        {t.auth?.forgotPasswordLink || 'Forgot Password?'}
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={t.auth?.passwordPlaceholder || 'Enter your password'}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Confirm Password (Sign Up only) */}
+              {mode === 'signup' && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span>{t.auth?.confirmPasswordLabel || 'Confirm Password'}</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder={t.auth?.confirmPasswordPlaceholder || 'Re-enter your password'}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+                      aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  {/* Password strength / match indicator */}
+                  <div className="text-[11px] text-muted-foreground space-y-0.5 pt-1">
+                    <p className={password.length >= 6 ? 'text-primary font-medium' : 'text-muted-foreground'}>
+                      • {t.auth?.passwordRequirements || 'Password must be at least 6 characters long.'}
+                    </p>
+                    {confirmPassword && (
+                      <p className={password === confirmPassword ? 'text-primary font-medium' : 'text-destructive font-medium'}>
+                        • {password === confirmPassword ? 'Passwords match' : (t.auth?.passwordMatchError || 'Passwords do not match')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Remember Me Option (Sign In only) */}
+              {mode === 'signin' && (
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="remember-me"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                  />
+                  <label htmlFor="remember-me" className="text-xs text-muted-foreground cursor-pointer select-none">
+                    {t.auth?.rememberMe || 'Remember my session on this device'}
+                  </label>
+                </div>
+              )}
+
+              {/* Submit CTA Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer mt-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    <span>{t.common.loading || 'Processing...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {mode === 'signin' && (t.auth?.signIn || 'Sign In')}
+                      {mode === 'signup' && (t.auth?.createAccount || 'Create Account')}
+                      {mode === 'forgot-password' && (t.auth?.resetPasswordBtn || 'Send Password Reset Email')}
+                    </span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
 
           {/* Bottom Switch Links */}
           <div className="pt-4 border-t border-border/60 text-center text-xs text-muted-foreground space-y-2">
@@ -510,7 +796,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               </p>
             )}
 
-            {mode === 'forgot-password' && (
+            {(mode === 'forgot-password' || mode === 'update-password') && (
               <button
                 type="button"
                 onClick={() => {

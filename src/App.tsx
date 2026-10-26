@@ -349,6 +349,22 @@ function AppContent() {
           />
         )}
 
+        {currentTab === 'confirm-email' && (
+          <AuthPage
+            initialMode="confirm-email"
+            onNavigateTab={handleSelectTab}
+            onSuccessRedirect={handleSelectTab}
+          />
+        )}
+
+        {currentTab === 'update-password' && (
+          <AuthPage
+            initialMode="update-password"
+            onNavigateTab={handleSelectTab}
+            onSuccessRedirect={handleSelectTab}
+          />
+        )}
+
         {currentTab === 'account' && (
           <AccountPage
             onNavigateTab={handleSelectTab}
