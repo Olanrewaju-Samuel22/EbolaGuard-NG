@@ -1,12 +1,19 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+// Normalize Supabase URL: strip /rest/v1 or trailing slashes if inadvertently provided in environment
+export const cleanSupabaseUrl = (url: string): string => {
+  if (!url) return '';
+  return url.trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+};
+
 // Read configuration strictly from environment variables
-export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
+const rawUrl = import.meta.env.VITE_SUPABASE_URL || '';
+export const SUPABASE_URL = cleanSupabaseUrl(rawUrl);
 
 // Support standard publishable key and anon key naming
 const envPublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
 const envAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const rawKey = envPublishableKey || envAnonKey;
+const rawKey = (envPublishableKey || envAnonKey || '').trim();
 
 // CRITICAL BROWSER SECURITY GUARD:
 // Supabase secret keys (sb_secret_... or service-role keys) must NEVER be used in browser client code.
@@ -23,13 +30,57 @@ if (isSecretKey && typeof window !== 'undefined') {
 // Clean publishable key only - never secret key
 export const SUPABASE_ANON_KEY = isSecretKey ? '' : rawKey;
 
-export const isSupabaseConfigured = Boolean(
-  SUPABASE_URL &&
-  SUPABASE_ANON_KEY &&
-  !SUPABASE_ANON_KEY.startsWith('sb_secret_') &&
-  SUPABASE_URL !== 'https://your-project.supabase.co' &&
-  !SUPABASE_URL.includes('placeholder')
-);
+export interface SupabaseConfigStatus {
+  isConfigured: boolean;
+  missingVariables: ('VITE_SUPABASE_URL' | 'VITE_SUPABASE_ANON_KEY')[];
+  errorMessage: string | null;
+  hasUrl: boolean;
+  hasKey: boolean;
+  isSecretKeyBlocked: boolean;
+}
+
+export function getSupabaseConfigStatus(): SupabaseConfigStatus {
+  const missing: ('VITE_SUPABASE_URL' | 'VITE_SUPABASE_ANON_KEY')[] = [];
+  const isUrlValid = Boolean(
+    SUPABASE_URL &&
+    SUPABASE_URL !== 'https://your-project.supabase.co' &&
+    !SUPABASE_URL.includes('placeholder')
+  );
+  if (!isUrlValid) {
+    missing.push('VITE_SUPABASE_URL');
+  }
+
+  const isKeyValid = Boolean(
+    SUPABASE_ANON_KEY &&
+    !SUPABASE_ANON_KEY.startsWith('sb_secret_') &&
+    SUPABASE_ANON_KEY !== 'placeholder'
+  );
+  if (!isKeyValid) {
+    missing.push('VITE_SUPABASE_ANON_KEY');
+  }
+
+  let errorMessage: string | null = null;
+  if (isSecretKey) {
+    errorMessage = 'Forbidden use of secret API key in browser: VITE_SUPABASE_ANON_KEY was set to a secret key (sb_secret_...). Frontend code requires your public publishable key (sb_publishable_...).';
+  } else if (missing.length > 0) {
+    errorMessage = `Supabase configuration missing: ${missing.join(' and ')} ${
+      missing.length > 1 ? 'are' : 'is'
+    } not configured in your environment.`;
+  }
+
+  return {
+    isConfigured: isUrlValid && isKeyValid,
+    missingVariables: missing,
+    errorMessage,
+    hasUrl: isUrlValid,
+    hasKey: isKeyValid,
+    isSecretKeyBlocked: isSecretKey,
+  };
+}
+
+export const supabaseConfigStatus = getSupabaseConfigStatus();
+
+export const isSupabaseConfigured = supabaseConfigStatus.isConfigured;
 
 // Initialize Supabase client strictly with the publishable key
 export const supabaseClient: SupabaseClient | null = isSupabaseConfigured
@@ -83,7 +134,9 @@ export async function testSupabaseConnection(): Promise<ConnectionTestResult> {
   };
 
   if (!supabaseClient) {
-    result.errorMessage = 'Supabase client is not initialized. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.';
+    result.errorMessage =
+      supabaseConfigStatus.errorMessage ||
+      'Supabase client is not initialized. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.';
     result.latencyMs = Date.now() - start;
     return result;
   }

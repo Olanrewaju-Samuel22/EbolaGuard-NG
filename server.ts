@@ -15,8 +15,27 @@ if (process.env.VITE_SUPABASE_ANON_KEY?.startsWith('sb_secret_') || process.env.
 // 2. Load .env with override so client-facing VITE_SUPABASE_ANON_KEY receives the publishable key
 dotenv.config({ override: true });
 
-// 3. Final verification: If VITE_SUPABASE_ANON_KEY still has a secret key, delete it
-if (process.env.VITE_SUPABASE_ANON_KEY?.startsWith('sb_secret_')) {
+// 3. Normalize Supabase URL: Strip /rest/v1 and trailing slash if present
+if (!process.env.VITE_SUPABASE_URL && process.env.SUPABASE_URL) {
+  process.env.VITE_SUPABASE_URL = process.env.SUPABASE_URL;
+}
+if (process.env.VITE_SUPABASE_URL) {
+  process.env.VITE_SUPABASE_URL = process.env.VITE_SUPABASE_URL.trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+}
+
+// 4. Fallback for publishable key if not explicitly set with VITE_
+if (!process.env.VITE_SUPABASE_ANON_KEY) {
+  const candidate = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
+  if (candidate && !candidate.startsWith('sb_secret_') && !candidate.includes('service_role')) {
+    process.env.VITE_SUPABASE_ANON_KEY = candidate;
+  }
+}
+
+// 5. Final verification: If VITE_SUPABASE_ANON_KEY still has a secret key, delete it
+if (process.env.VITE_SUPABASE_ANON_KEY?.startsWith('sb_secret_') || process.env.VITE_SUPABASE_ANON_KEY?.includes('service_role')) {
+  if (!process.env.SUPABASE_SECRET_KEY) {
+    process.env.SUPABASE_SECRET_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+  }
   delete process.env.VITE_SUPABASE_ANON_KEY;
 }
 

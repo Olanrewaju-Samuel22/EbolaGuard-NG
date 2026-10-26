@@ -28,7 +28,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   onNavigateTab
 }) => {
   const { t } = useTranslation();
-  const { signInWithEmail, signUpWithEmail, resetPassword, user, error, clearError } = useAuth();
+  const {
+    signInWithEmail,
+    signUpWithEmail,
+    resetPassword,
+    user,
+    error,
+    clearError,
+    isConfigured,
+    configStatus
+  } = useAuth();
 
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot-password'>(initialMode);
 
@@ -238,6 +247,29 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               >
                 {t.auth?.createAccount || 'Create Account'}
               </button>
+            </div>
+          )}
+
+          {/* Configuration Notice Alert (Identifies missing environment variables clearly without revealing keys) */}
+          {!isConfigured && (
+            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs space-y-2">
+              <div className="flex items-center gap-2 font-bold text-amber-800 dark:text-amber-300">
+                <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                <span>Supabase Configuration Notice</span>
+              </div>
+              <p className="leading-relaxed">
+                {configStatus?.errorMessage || 'Supabase authentication is not configured in this environment.'}
+              </p>
+              {configStatus?.missingVariables && configStatus.missingVariables.length > 0 && (
+                <div className="pt-1 flex flex-wrap gap-1.5 items-center">
+                  <span className="font-semibold text-muted-foreground">Required variables:</span>
+                  {configStatus.missingVariables.map((v) => (
+                    <code key={v} className="px-1.5 py-0.5 rounded bg-amber-500/20 font-mono text-[11px] font-bold text-amber-900 dark:text-amber-200">
+                      {v}
+                    </code>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

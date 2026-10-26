@@ -4,7 +4,10 @@ import {
   isSupabaseConfigured,
   testSupabaseConnection,
   SUPABASE_URL,
-  SUPABASE_ANON_KEY
+  SUPABASE_ANON_KEY,
+  supabaseConfigStatus,
+  getSupabaseConfigStatus,
+  type SupabaseConfigStatus
 } from './supabaseClient';
 import {
   HealthArticle,
@@ -18,7 +21,17 @@ import {
   AuditLog
 } from '../types';
 
-export { supabaseClient, supabase, isSupabaseConfigured, testSupabaseConnection, SUPABASE_URL, SUPABASE_ANON_KEY };
+export {
+  supabaseClient,
+  supabase,
+  isSupabaseConfigured,
+  testSupabaseConnection,
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
+  supabaseConfigStatus,
+  getSupabaseConfigStatus,
+  type SupabaseConfigStatus
+};
 
 // ==========================================
 // VERIFIED PUBLIC HEALTH INITIAL DATASET

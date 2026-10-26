@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabaseClient, isSupabaseConfigured } from '../lib/supabaseClient';
+import { supabaseClient, isSupabaseConfigured, getSupabaseConfigStatus, supabaseConfigStatus, type SupabaseConfigStatus } from '../lib/supabaseClient';
 import { UserProfile } from '../types';
 
 interface AuthContextType {
@@ -9,6 +9,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   isConfigured: boolean;
+  configStatus: SupabaseConfigStatus;
   error: string | null;
   clearError: () => void;
   signInWithEmail: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
@@ -133,8 +134,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const signInWithEmail = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setError(null);
 
-    if (!supabaseClient) {
-      const msg = 'Supabase credentials are not configured in your environment.';
+    if (!supabaseClient || !isSupabaseConfigured) {
+      const status = getSupabaseConfigStatus();
+      const msg = status.errorMessage || 'Supabase credentials are not configured in your environment.';
       setError(msg);
       return { success: false, error: msg };
     }
@@ -180,8 +182,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   ): Promise<{ success: boolean; error?: string; emailConfirmationRequired?: boolean }> => {
     setError(null);
 
-    if (!supabaseClient) {
-      const msg = 'Supabase credentials are not configured in your environment.';
+    if (!supabaseClient || !isSupabaseConfigured) {
+      const status = getSupabaseConfigStatus();
+      const msg = status.errorMessage || 'Supabase credentials are not configured in your environment.';
       setError(msg);
       return { success: false, error: msg };
     }
@@ -273,8 +276,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const resetPassword = async (email: string): Promise<{ success: boolean; error?: string }> => {
     setError(null);
 
-    if (!supabaseClient) {
-      const msg = 'Supabase client is not configured.';
+    if (!supabaseClient || !isSupabaseConfigured) {
+      const status = getSupabaseConfigStatus();
+      const msg = status.errorMessage || 'Supabase client is not configured.';
       setError(msg);
       return { success: false, error: msg };
     }
@@ -356,6 +360,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       profile,
       loading,
       isConfigured: isSupabaseConfigured,
+      configStatus: supabaseConfigStatus,
       error,
       clearError,
       signInWithEmail,
