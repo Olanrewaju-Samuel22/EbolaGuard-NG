@@ -1,17 +1,37 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Consistent environment variable names
+// Read configuration strictly from environment variables
 export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
-export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+// Support standard publishable key and anon key naming
+const envPublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
+const envAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const rawKey = envPublishableKey || envAnonKey;
+
+// CRITICAL BROWSER SECURITY GUARD:
+// Supabase secret keys (sb_secret_... or service-role keys) must NEVER be used in browser client code.
+// They bypass Row Level Security and are strictly forbidden in client-side applications.
+const isSecretKey = typeof rawKey === 'string' && (rawKey.startsWith('sb_secret_') || rawKey.includes('service_role'));
+
+if (isSecretKey && typeof window !== 'undefined') {
+  console.error(
+    '[EbolaGuard NG Security Guard] Forbidden use of Supabase secret API key in browser. ' +
+    'The client has blocked this key. Please configure VITE_SUPABASE_ANON_KEY with your publishable key (sb_publishable_...).'
+  );
+}
+
+// Clean publishable key only - never secret key
+export const SUPABASE_ANON_KEY = isSecretKey ? '' : rawKey;
 
 export const isSupabaseConfigured = Boolean(
   SUPABASE_URL &&
   SUPABASE_ANON_KEY &&
+  !SUPABASE_ANON_KEY.startsWith('sb_secret_') &&
   SUPABASE_URL !== 'https://your-project.supabase.co' &&
   !SUPABASE_URL.includes('placeholder')
 );
 
-// Initialize Supabase client
+// Initialize Supabase client strictly with the publishable key
 export const supabaseClient: SupabaseClient | null = isSupabaseConfigured
   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {

@@ -3,6 +3,7 @@ import { MessageSquare, X, Send, Bot, PhoneCall, Minimize2, ExternalLink } from 
 import { SupportedLanguage } from '../types';
 import { askHealthAssistant } from '../lib/ai-service';
 import { useTranslation } from '../contexts/LanguageContext';
+import { FormattedMessage } from './FormattedMessage';
 
 interface FloatingAssistantProps {
   language?: SupportedLanguage;
@@ -97,15 +98,14 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
 
   return (
     <>
-      {/* Floating Toggle Button */}
+      {/* Floating Toggle Button matching reference yh */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-5 right-5 z-40 p-3.5 rounded-full bg-primary text-primary-foreground shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 group ring-2 ring-primary/20 ring-offset-2 ring-offset-background"
+          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 bg-primary hover:bg-primary/90 text-white flex items-center justify-center active:scale-95 transition-transform group"
           aria-label="Open AI Assistant"
         >
-          <Bot className="w-5 h-5 text-white animate-pulse" />
-          <span className="hidden sm:inline font-semibold text-xs pr-1">Ask AI</span>
+          <Bot className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
         </button>
       )}
 
@@ -150,13 +150,17 @@ export const FloatingAssistant: React.FC<FloatingAssistantProps> = ({
                 className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl p-3 leading-relaxed whitespace-pre-line ${
+                  className={`max-w-[85%] rounded-2xl p-3 leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-primary text-primary-foreground rounded-br-none'
+                      ? 'bg-primary text-primary-foreground rounded-br-none whitespace-pre-wrap break-words'
                       : 'bg-card border border-border text-foreground rounded-bl-none shadow-2xs'
                   }`}
                 >
-                  {m.text}
+                  {m.sender === 'user' ? (
+                    <div className="break-words">{m.text}</div>
+                  ) : (
+                    <FormattedMessage content={m.text} />
+                  )}
                 </div>
                 <span className="text-[9px] text-muted-foreground mt-0.5 px-1">{m.time}</span>
               </div>

@@ -236,6 +236,15 @@ CREATE POLICY "Staff can view misinformation reports" ON public.misinformation_r
 CREATE POLICY "Staff can manage misinformation reports" ON public.misinformation_reports FOR UPDATE TO authenticated USING (true);
 CREATE POLICY "Staff can view subscriptions" ON public.subscriptions FOR SELECT TO authenticated USING (true);
 
+-- User Profiles (Self-access only)
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
+
+CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
+
 -- INITIAL SEED RECORDS
 INSERT INTO public.official_sources (id, name, website_url, source_type, is_active)
 VALUES

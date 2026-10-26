@@ -84,10 +84,10 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
               </li>
               <li>
                 <button
-                  onClick={() => onSelectTab('admin')}
+                  onClick={() => onSelectTab('account')}
                   className="hover:text-primary transition-colors text-left"
                 >
-                  {t.nav.admin}
+                  {t.auth?.myAccount || 'My Account'} / {t.auth?.signIn || 'Sign In'}
                 </button>
               </li>
             </ul>

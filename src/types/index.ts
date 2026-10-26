@@ -4,6 +4,17 @@ export type VerificationStatus = 'verified' | 'pending_review' | 'flagged' | 'ar
 
 export type SupportedLanguage = 'en' | 'pcm' | 'yo' | 'ha' | 'ig';
 
+export interface UserProfile {
+  id: string;
+  email: string;
+  full_name?: string;
+  phone_number?: string;
+  state?: string;
+  role?: UserRole;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface OfficialSource {
   id: string;
   name: string;
@@ -133,7 +144,7 @@ export interface VirtualConsultationMessage {
 
 export interface VirtualDoctorTriageResult {
   level: 1 | 2 | 3;
-  level_name: 'General Guidance' | 'Prompt Professional Assessment' | 'Immediate Emergency Medical Attention';
+  level_name: string;
   summary: string;
   warning_signs_detected: string[];
   exposure_risk_flag: boolean;

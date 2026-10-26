@@ -55,6 +55,9 @@ export interface TranslationDictionary {
     admin: string;
     staff: string;
     getGuidance: string;
+    signIn?: string;
+    createAccount?: string;
+    account?: string;
   };
   alert: {
     officialBadge: string;
@@ -266,6 +269,10 @@ export interface TranslationDictionary {
     level3Title: string;
     callAheadNotice: string;
     newConsultationBtn: string;
+    validationError?: string;
+    editAnswersBtn?: string;
+    consultationError?: string;
+    symptomSelectedCount?: string;
   };
   assistant: {
     badge: string;
@@ -418,6 +425,64 @@ export interface TranslationDictionary {
     short: string;
     emergencyCall: string;
   };
+  auth: {
+    signIn: string;
+    signUp: string;
+    signOut: string;
+    createAccount: string;
+    myAccount: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    passwordLabel: string;
+    passwordPlaceholder: string;
+    confirmPasswordLabel: string;
+    confirmPasswordPlaceholder: string;
+    fullNameLabel: string;
+    fullNamePlaceholder: string;
+    forgotPasswordLink: string;
+    rememberMe: string;
+    dontHaveAccount: string;
+    alreadyHaveAccount: string;
+    signInTitle: string;
+    signInSubtitle: string;
+    signUpTitle: string;
+    signUpSubtitle: string;
+    forgotTitle: string;
+    forgotSubtitle: string;
+    resetPasswordBtn: string;
+    backToSignIn: string;
+    showPassword: string;
+    hidePassword: string;
+    passwordRequirements: string;
+    passwordMatchError: string;
+    passwordLengthError: string;
+    emailRequiredError: string;
+    nameRequiredError: string;
+    registrationSuccess: string;
+    emailConfirmNotice: string;
+    resetEmailSent: string;
+    publicNotice: string;
+    accountTitle: string;
+    accountSubtitle: string;
+    editProfile: string;
+    saveChanges: string;
+    saving: string;
+    profileUpdated: string;
+    phoneLabel: string;
+    stateLabel: string;
+    memberSince: string;
+    securitySettings: string;
+    verifiedAccount: string;
+    alertPreferences: string;
+    smsAlerts: string;
+    emailAlerts: string;
+    emergencyQuickLinks: string;
+    viewAssessments: string;
+    facilityDirectory: string;
+    outbreakFeed: string;
+    loginRequiredTitle: string;
+    loginRequiredDesc: string;
+  };
 }
 
 export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
@@ -478,7 +543,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
       contact: 'Report / Contact',
       admin: 'Admin Portal',
       staff: 'Staff',
-      getGuidance: 'Get Health Guidance'
+      getGuidance: 'Get Health Guidance',
+      signIn: 'Sign In',
+      createAccount: 'Create Account',
+      account: 'My Account'
     },
     alert: {
       officialBadge: 'Official Public Health Status',
@@ -689,7 +757,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
       level2Title: 'Level 2: Prompt Primary Healthcare Assessment',
       level3Title: 'Level 3: Immediate Emergency Medical Guidance',
       callAheadNotice: 'MANDATORY CALL-AHEAD NOTICE: Before going to any hospital, call NCDC Toll-Free 6232 so the isolation team can prepare safe reception.',
-      newConsultationBtn: 'Start New Assessment'
+      newConsultationBtn: 'Start New Assessment',
+      validationError: 'Please describe your symptoms in the box or select at least one symptom from the list below.',
+      editAnswersBtn: 'Review & Edit Answers',
+      consultationError: 'Unable to connect to the online triage engine. Your entered information is preserved, and a local public health assessment has been generated below.',
+      symptomSelectedCount: 'symptoms selected'
     },
     assistant: {
       badge: 'AI Health Education Guide (Powered by Gemini)',
@@ -841,6 +913,64 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     disclaimer: {
       short: 'EbolaGuard NG provides verified public health education and AI triage guidance. It is NOT a substitute for licensed clinical diagnosis or emergency hospital care.',
       emergencyCall: 'For immediate medical emergencies or suspected exposure, dial NCDC Toll-Free 6232 or your state emergency response number immediately.'
+    },
+    auth: {
+      signIn: 'Sign In',
+      signUp: 'Create Account',
+      signOut: 'Sign Out',
+      createAccount: 'Create Account',
+      myAccount: 'My Account',
+      emailLabel: 'Email Address',
+      emailPlaceholder: 'you@example.com',
+      passwordLabel: 'Password',
+      passwordPlaceholder: 'Enter your password',
+      confirmPasswordLabel: 'Confirm Password',
+      confirmPasswordPlaceholder: 'Re-enter your password',
+      fullNameLabel: 'Full Name',
+      fullNamePlaceholder: 'e.g. Dr. Amina Bello',
+      forgotPasswordLink: 'Forgot Password?',
+      rememberMe: 'Remember my session',
+      dontHaveAccount: "Don't have an account?",
+      alreadyHaveAccount: 'Already have an account?',
+      signInTitle: 'Sign In to EbolaGuard NG',
+      signInSubtitle: 'Access personalized public health resources, save consultation history, and manage state alert preferences.',
+      signUpTitle: 'Create an EbolaGuard Account',
+      signUpSubtitle: 'Join thousands of Nigerians staying protected with verified disease bulletins, risk screening, and emergency directories.',
+      forgotTitle: 'Recover Your Password',
+      forgotSubtitle: 'Enter your registered email address and we will dispatch a secure reset link to your inbox.',
+      resetPasswordBtn: 'Send Password Reset Email',
+      backToSignIn: 'Return to Sign In',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      passwordRequirements: 'Password must be at least 6 characters long.',
+      passwordMatchError: 'Passwords do not match. Please ensure both passwords are identical.',
+      passwordLengthError: 'Password must be at least 6 characters.',
+      emailRequiredError: 'Please provide a valid email address.',
+      nameRequiredError: 'Please enter your full name.',
+      registrationSuccess: 'Account successfully registered!',
+      emailConfirmNotice: 'If email confirmation is enabled on your Supabase project, please check your email inbox to confirm your address before signing in.',
+      resetEmailSent: 'Password reset link has been dispatched! Please check your email inbox.',
+      publicNotice: 'Emergency guidance, outbreak statistics, and the Risk Assessment tool are 100% public and free without logging in.',
+      accountTitle: 'Account & Health Profile',
+      accountSubtitle: 'Manage your verified contact credentials, emergency state location, and outbreak notification settings.',
+      editProfile: 'Edit Health Profile',
+      saveChanges: 'Save Changes',
+      saving: 'Saving...',
+      profileUpdated: 'Your health profile has been successfully updated.',
+      phoneLabel: 'Emergency Phone Number',
+      stateLabel: 'Primary Nigerian State / Location',
+      memberSince: 'Member Since',
+      securitySettings: 'Account & Security Status',
+      verifiedAccount: 'Supabase Authenticated',
+      alertPreferences: 'Emergency Outbreak Alerts',
+      smsAlerts: 'Receive high-priority NCDC epidemic SMS alerts',
+      emailAlerts: 'Receive weekly verified public health digest',
+      emergencyQuickLinks: 'Quick Health Actions',
+      viewAssessments: 'Start Symptom Assessment',
+      facilityDirectory: 'Locate Nearest Facility',
+      outbreakFeed: 'View Outbreak Updates',
+      loginRequiredTitle: 'Authentication Required',
+      loginRequiredDesc: 'Please sign in or create an account to view and manage your EbolaGuard NG profile.'
     }
   },
 
@@ -1112,7 +1242,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
       level2Title: 'Level 2: Quick Visit to Primary Health Centre',
       level3Title: 'Level 3: Immediate Emergency Guidance (Call 6232)',
       callAheadNotice: 'IMPORTANT NOTICE: Before you run enter hospital, call NCDC free line 6232 make doctors wear safety clothes ready for you.',
-      newConsultationBtn: 'Start Another Check'
+      newConsultationBtn: 'Start Another Check',
+      validationError: 'Abeg write small explanation for di text box or select at least one symptom from di cards below.',
+      editAnswersBtn: 'Check & Change Your Answers',
+      consultationError: 'Network get small wahala for online consultation. We don use our local emergency rule check your symptoms below.',
+      symptomSelectedCount: 'symptoms wey you choose'
     },
     assistant: {
       badge: 'AI Health Education Helper (Gemini)',
@@ -1264,6 +1398,64 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     disclaimer: {
       short: 'EbolaGuard NG na public health education tool. E no replace real hospital doctor or blood test.',
       emergencyCall: 'If person seriously sick or bleed, call NCDC free line 6232 right away make hospital prepare before you enter.'
+    },
+    auth: {
+      signIn: 'Sign In (Waka Enter)',
+      signUp: 'Create Account (Open Account)',
+      signOut: 'Sign Out (Comot)',
+      createAccount: 'Create Account',
+      myAccount: 'My Account',
+      emailLabel: 'Email Address',
+      emailPlaceholder: 'you@example.com',
+      passwordLabel: 'Password',
+      passwordPlaceholder: 'Enter your password',
+      confirmPasswordLabel: 'Confirm Password',
+      confirmPasswordPlaceholder: 'Write your password again',
+      fullNameLabel: 'Your Full Name',
+      fullNamePlaceholder: 'e.g. Dr. Amina Bello',
+      forgotPasswordLink: 'You forget password?',
+      rememberMe: 'Remember my session',
+      dontHaveAccount: 'You never get account?',
+      alreadyHaveAccount: 'You already get account?',
+      signInTitle: 'Sign In to EbolaGuard NG',
+      signInSubtitle: 'Waka enter your account to check your health history and manage outbreak alerts.',
+      signUpTitle: 'Create EbolaGuard Account',
+      signUpSubtitle: 'Join our people wey dey stay protected with correct health tori and emergency guides.',
+      forgotTitle: 'Recover Your Password',
+      forgotSubtitle: 'Put your email wey you take register make we send you reset link sharp-sharp.',
+      resetPasswordBtn: 'Send Password Reset Email',
+      backToSignIn: 'Go Back to Sign In',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      passwordRequirements: 'Password must reach at least 6 letters.',
+      passwordMatchError: 'The two passwords no match. Check am well.',
+      passwordLengthError: 'Password must reach at least 6 letters.',
+      emailRequiredError: 'Abeg put correct email address.',
+      nameRequiredError: 'Abeg enter your full name.',
+      registrationSuccess: 'Account don open successfully!',
+      emailConfirmNotice: 'If Supabase need email confirmation, abeg check your email inbox to confirm your address before you sign in.',
+      resetEmailSent: 'Password reset link don reach your email! Check am now.',
+      publicNotice: 'Emergency advice, outbreak numbers, and Risk Assessment tool na 100% free for everybody without login.',
+      accountTitle: 'Account & Health Profile',
+      accountSubtitle: 'Manage your contact details, state location, and outbreak notification preferences.',
+      editProfile: 'Edit Health Profile',
+      saveChanges: 'Save Am',
+      saving: 'E dey save...',
+      profileUpdated: 'Your profile don update well-well.',
+      phoneLabel: 'Emergency Phone Number',
+      stateLabel: 'Your State / Location for Nigeria',
+      memberSince: 'Member Since',
+      securitySettings: 'Account & Security Status',
+      verifiedAccount: 'Supabase Authenticated',
+      alertPreferences: 'Emergency Outbreak Alerts',
+      smsAlerts: 'Receive emergency NCDC epidemic SMS alerts',
+      emailAlerts: 'Receive weekly verified public health digest',
+      emergencyQuickLinks: 'Quick Health Actions',
+      viewAssessments: 'Start Symptom Assessment',
+      facilityDirectory: 'Find Hospitals Near You',
+      outbreakFeed: 'See Outbreak News',
+      loginRequiredTitle: 'You Need to Sign In',
+      loginRequiredDesc: 'Abeg sign in or open account to manage your EbolaGuard NG health profile.'
     }
   },
 
@@ -1535,7 +1727,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
       level2Title: 'Ipele 2: Ìbẹ̀wò Kíákíá Sí Ilé-Ìwòsàn Agbègbè',
       level3Title: 'Ipele 3: Ìtọ́sọ́nà Pàjáwìrì Kíákíá (Pe 6232)',
       callAheadNotice: 'ÌKÌLỌ̀ PÀTÀKÌ: Ṣáájú kí o tó sáré lọ sí ilé-ìwòsàn, pe nọ́mbà ọ̀fẹ́ NCDC 6232 kí àwọn dókítà lè múra sílẹ̀ de ọ pẹ̀lú aṣọ ààbò.',
-      newConsultationBtn: 'Bẹ̀rẹ̀ Àyẹ̀wò Titun'
+      newConsultationBtn: 'Bẹ̀rẹ̀ Àyẹ̀wò Titun',
+      validationError: 'Jọ̀wọ́ kọ àlàyé sí inú àpótí tàbí kí o yan ó kéré tán àmì àrùn kan lára àwọn káàdì nísàlẹ̀.',
+      editAnswersBtn: 'Ṣàtúnṣe Àwọn Ìdáhùn Rẹ',
+      consultationError: 'Àṣìṣe wáyé nígbà tí a ń kàn sí ẹ̀rọ. Àwọn ìdáhùn rẹ wà ní ààbò, a sì ti lo ìlànà agbègbè fún àyẹ̀wò rẹ nísàlẹ̀.',
+      symptomSelectedCount: 'àmì àrùn tí a yàn'
     },
     assistant: {
       badge: 'Olùkọ́ Ìlera AI (Gemini)',
@@ -1687,6 +1883,64 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     disclaimer: {
       short: 'EbolaGuard NG wà fún ìmọ̀ ìlera gbogbogbò. Kì í ṣe dípò dókítà ilé-ìwòsàn.',
       emergencyCall: 'Fún pàjáwìrì, pe nọ́mbà NCDC 6232 kíákíá.'
+    },
+    auth: {
+      signIn: 'Wọle (Sign In)',
+      signUp: 'Ṣẹda Akọọlẹ (Create Account)',
+      signOut: 'Wọ jade (Sign Out)',
+      createAccount: 'Ṣẹda Akọọlẹ',
+      myAccount: 'Akọọlẹ Mi',
+      emailLabel: 'Adirẹsi Imeeli',
+      emailPlaceholder: 'you@example.com',
+      passwordLabel: 'Ọrọigbaniwọle',
+      passwordPlaceholder: 'Tẹ ọrọigbaniwọle rẹ',
+      confirmPasswordLabel: 'Tẹ Ọrọigbaniwọle Lẹẹkan Si',
+      confirmPasswordPlaceholder: 'Tún ọrọigbaniwọle rẹ tẹ',
+      fullNameLabel: 'Orukọ Rẹ Lẹkunrẹrẹ',
+      fullNamePlaceholder: 'b.a. Dr. Amina Bello',
+      forgotPasswordLink: 'Njẹ o gbagbe ọrọigbaniwọle?',
+      rememberMe: 'Ranti igba mi',
+      dontHaveAccount: 'Ṣe o ko ti ni akọọlẹ?',
+      alreadyHaveAccount: 'Ṣe o ti ni akọọlẹ tẹlẹ?',
+      signInTitle: 'Wọle si EbolaGuard NG',
+      signInSubtitle: 'Wọle lati wo itan ilera rẹ ati ṣakoso awọn ikilọ ajakalẹ-arun.',
+      signUpTitle: 'Ṣẹda Akọọlẹ EbolaGuard',
+      signUpSubtitle: 'Darapọ mọ ẹgbẹẹgbẹrun awọn ọmọ orilẹ-ede Naijiria ti n ri aabo.',
+      forgotTitle: 'Gba Ọrọigbaniwọle Rẹ Pada',
+      forgotSubtitle: 'Tẹ imeeli rẹ sii lati gba ọna abawọle imularada.',
+      resetPasswordBtn: 'Fi Imeeli Atunṣe Ránṣẹ́',
+      backToSignIn: 'Pada si Oju-iwe Wọle',
+      showPassword: 'Fi ọrọigbaniwọle han',
+      hidePassword: 'Pa ọrọigbaniwọle mọ',
+      passwordRequirements: 'Ọrọigbaniwọle gbọdọ to o kere ju lẹta 6.',
+      passwordMatchError: 'Awọn ọrọigbaniwọle mejeeji ko baramu.',
+      passwordLengthError: 'Ọrọigbaniwọle gbọdọ to o kere ju lẹta 6.',
+      emailRequiredError: 'Jọwọ tẹ adirẹsi imeeli to tọ.',
+      nameRequiredError: 'Jọwọ tẹ orukọ rẹ lẹkunrẹrẹ.',
+      registrationSuccess: 'A ti ṣẹda akọọlẹ rẹ ni aṣeyọri!',
+      emailConfirmNotice: 'Ti iṣẹ Supabase rẹ ba nilo ijẹrisi imeeli, jọwọ ṣayẹwo apo-iwọle rẹ ṣaaju ki o to wọle.',
+      resetEmailSent: 'A ti fi ọna abawọle atunṣe ranṣẹ si imeeli rẹ!',
+      publicNotice: 'Awọn ilana pajawiri, iṣiro ajakalẹ-arun, ati ayẹwo aisan wa ni ọfẹ fun gbogbo eniyan laisi wọle.',
+      accountTitle: 'Akọọlẹ & Profaili Ilera',
+      accountSubtitle: 'Ṣakoso awọn alaye rẹ, ipinlẹ rẹ ni Naijiria, ati awọn eto ikilọ ajakalẹ.',
+      editProfile: 'Ṣatunkọ Profaili Ilera',
+      saveChanges: 'Fi Awọn Iyipada Pamọ',
+      saving: 'O n fipamọ...',
+      profileUpdated: 'A ti ṣe imudojuiwọn profaili rẹ ni aṣeyọri.',
+      phoneLabel: 'Nọmba Foonu Pajawiri',
+      stateLabel: 'Ipinlẹ Rẹ ni Naijiria',
+      memberSince: 'O ti di ọmọ ẹgbẹ lati',
+      securitySettings: 'Aabo & Ipo Akọọlẹ',
+      verifiedAccount: 'Supabase ti fọwọsi',
+      alertPreferences: 'Awọn Ikilọ Pajawiri NCDC',
+      smsAlerts: 'Gba awọn ifiranṣẹ SMS pajawiri NCDC',
+      emailAlerts: 'Gba iwe iroyin ilera lodọọdun',
+      emergencyQuickLinks: 'Awọn Iṣe Ilera Kíákíá',
+      viewAssessments: 'Bẹrẹ Ayẹwo Aisan',
+      facilityDirectory: 'Wa Awọn Ilé-Ìwòsàn Nitosi',
+      outbreakFeed: 'Wo Awọn Iroyin Ajakalẹ',
+      loginRequiredTitle: 'O Ni Lati Wọle',
+      loginRequiredDesc: 'Jọwọ wọle tabi ṣẹda akọọlẹ lati wọle si profaili EbolaGuard NG rẹ.'
     }
   },
 
@@ -1958,7 +2212,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
       level2Title: 'Mataki na 2: Ziyarar Gaggawa Zuwa Asibitin Kusa',
       level3Title: 'Mataki na 3: Taimakon Gaggawa Na Asibiti (Kira 6232)',
       callAheadNotice: 'GARGADI MAI MUHIMMANCI: Kafin ka tafi asibiti, kira layin NCDC kyauta a 6232 domin likitoci su shirya dakin kebewa kafin isarka.',
-      newConsultationBtn: 'Fara Sabon Bincike'
+      newConsultationBtn: 'Fara Sabon Bincike',
+      validationError: 'Da fatan za a bayyana alamominku a akwatin rubutu ko zaɓi aƙalla alama ɗaya daga cikin katunan ƙasa.',
+      editAnswersBtn: 'Duba & Gyara Amsoshinka',
+      consultationError: 'An sami matsala wajen haɗawa da ɗakin bincike na kan layi. Bayananku suna nan a ajiye, an kuma bincika alamunku bisa tsarin gida a ƙasa.',
+      symptomSelectedCount: 'alamomin da aka zaɓa'
     },
     assistant: {
       badge: 'Mataimakin Ilimin Lafiya Na AI (Gemini)',
@@ -2110,6 +2368,64 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     disclaimer: {
       short: 'EbolaGuard NG na bayar da fadakarwa ne kawai. Ba ta maye gurbin ainihin likita ba.',
       emergencyCall: 'A lokacin gaggawa, kira NCDC 6232 nan take.'
+    },
+    auth: {
+      signIn: 'Shiga (Sign In)',
+      signUp: 'Bude Asusu (Create Account)',
+      signOut: 'Fita (Sign Out)',
+      createAccount: 'Bude Asusu',
+      myAccount: 'Asusuna',
+      emailLabel: 'Adireshin Imel',
+      emailPlaceholder: 'you@example.com',
+      passwordLabel: 'Kalmar Sirri',
+      passwordPlaceholder: 'Shigar da kalmar sirri',
+      confirmPasswordLabel: 'Tabbatar da Kalmar Sirri',
+      confirmPasswordPlaceholder: 'Sake shigar da kalmar sirri',
+      fullNameLabel: 'Cikakken Sunanka',
+      fullNamePlaceholder: 'misali Dr. Amina Bello',
+      forgotPasswordLink: 'Ka manta kalmar sirri?',
+      rememberMe: 'Tuna zaman asusuna',
+      dontHaveAccount: 'Ba ka da asusu tukuna?',
+      alreadyHaveAccount: 'Kana da asusu a riga?',
+      signInTitle: 'Shiga EbolaGuard NG',
+      signInSubtitle: 'Shiga asusunka don duba tarihin lafiyarka da tsara sanarwar annoba.',
+      signUpTitle: 'Bude Sabon Asusun EbolaGuard',
+      signUpSubtitle: "Kasance tare da dubban 'yan Najeriya da ke kare kansu da sahihan bayanan kiwon lafiya.",
+      forgotTitle: 'Dawo da Kalmar Sirri',
+      forgotSubtitle: 'Shigar da adireshin imel dinka don samun sakon dawo da asusunka.',
+      resetPasswordBtn: 'Aika Sakon Dawo da Kalmar Sirri',
+      backToSignIn: 'Koma Shafin Shiga',
+      showPassword: 'Nuna kalmar sirri',
+      hidePassword: 'Boye kalmar sirri',
+      passwordRequirements: 'Dole ne kalmar sirri ta kai a kalla haruffa 6.',
+      passwordMatchError: 'Kalmomin sirri ba su yi daidai da juna ba.',
+      passwordLengthError: 'Dole ne kalmar sirri ta kai a kalla haruffa 6.',
+      emailRequiredError: 'Da fatan za a shigar da ingantaccen imel.',
+      nameRequiredError: 'Da fatan za a shigar da cikakken sunanka.',
+      registrationSuccess: 'An bude asusunka cikin nasara!',
+      emailConfirmNotice: 'Idan tsarin Supabase yana bukatar tabbatar da imel, duba akwatin sakonka kafin ka shiga.',
+      resetEmailSent: 'An tura hanyar dawo da kalmar sirri zuwa imel dinka!',
+      publicNotice: 'Bayanin gaggawa, kididdigar annoba, da tsarin binciken hadari kyauta ne ga kowa ba tare da shiga asusu ba.',
+      accountTitle: 'Bayanin Asusu & Lafiya',
+      accountSubtitle: 'Sarrafa lambobin sadarwarka, jiharka a Najeriya, da tsarin sanarwar annoba.',
+      editProfile: 'Gyara Bayanin Lafiya',
+      saveChanges: 'Ajiye Canje-canje',
+      saving: 'Yana ajiye...',
+      profileUpdated: 'An sabunta bayaninka cikin nasara.',
+      phoneLabel: 'Lambar Wayar Gaggawa',
+      stateLabel: 'Babbar Jiharka a Najeriya',
+      memberSince: 'Ya zama memba tun',
+      securitySettings: 'Tsaro & Matsayin Asusu',
+      verifiedAccount: 'An Tabbatar da Supabase',
+      alertPreferences: 'Sanarwar Annoba Ta Gaggawa',
+      smsAlerts: 'Karbi sakon SMS na gaggawa daga NCDC',
+      emailAlerts: 'Karbi bayanin kiwon lafiya na mako-mako',
+      emergencyQuickLinks: 'Hanyoyin Gaggawa',
+      viewAssessments: 'Fara Binciken Alamomi',
+      facilityDirectory: 'Nemi Asibiti Kusa da Kai',
+      outbreakFeed: 'Duba Sabbin Labarai',
+      loginRequiredTitle: 'Ana Bukatar Shiga Asusu',
+      loginRequiredDesc: 'Da fatan za a shiga ko bude asusu don sarrafa bayananka a EbolaGuard NG.'
     }
   },
 
@@ -2381,7 +2697,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
       level2Title: 'Ọkwa 2: Ịga Ụlọ Ọgwụ Ndị Obodo Ngwa Ngwa',
       level3Title: 'Ọkwa 3: Nlekọta Mberede Ngwa Ngwa (Kpọọ 6232)',
       callAheadNotice: 'ỊDỌ AKA NÁ NTỊ DỊ MKPA: Tupu ị gaa n\'ụlọ ọgwụ, kpọọ akara ekwentị NCDC n\'efu na 6232 ka ndị dọkịta wee kwado uwe nchebe tupu ị rute.',
-      newConsultationBtn: 'Bido Nyocha Ọhụrụ'
+      newConsultationBtn: 'Bido Nyocha Ọhụrụ',
+      validationError: 'Biko kọwaa ihe mgbaàmà gị n\'igbe ederede ma ọ bụ họrọ ma ọ dịkarịa ala otu ihe mgbaàmà site na kaadị ndị dị n\'okpuru.',
+      editAnswersBtn: 'Nyochaa & Mezie Azịza Gị',
+      consultationError: 'Enweghị ike mezue nyocha n\'ịntanetị. Ejidela ozi gị nke ọma, ejirikwa usoro nyocha mberede obodo nyochaa ihe mgbaàmà gị n\'okpuru.',
+      symptomSelectedCount: 'ihe mgbaàmà ahọpụtara'
     },
     assistant: {
       badge: 'Onye Nkụzi Ahụike AI (Gemini)',
@@ -2533,6 +2853,64 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     disclaimer: {
       short: 'EbolaGuard NG bụ maka nkuzi ahụike. Ọ bụghị dọkịta nwere ikike n\'ụlọ ọgwụ.',
       emergencyCall: 'Maka ọnọdụ mberede, kpọọ NCDC 6232 ozugbo.'
+    },
+    auth: {
+      signIn: 'Banye (Sign In)',
+      signUp: 'Mepụta Akaụntụ (Create Account)',
+      signOut: 'Pụọ (Sign Out)',
+      createAccount: 'Mepụta Akaụntụ',
+      myAccount: 'Akaụntụ M',
+      emailLabel: 'Adreesị Ozi-e',
+      emailPlaceholder: 'you@example.com',
+      passwordLabel: 'Okwuntughe',
+      passwordPlaceholder: 'Tinye okwuntughe gị',
+      confirmPasswordLabel: 'Kwenye Okwuntughe',
+      confirmPasswordPlaceholder: 'Tinyegharịa okwuntughe gị',
+      fullNameLabel: 'Aha Gị Niile',
+      fullNamePlaceholder: 'dịka Dr. Amina Bello',
+      forgotPasswordLink: 'Ị chefuru okwuntughe?',
+      rememberMe: 'Cheta oge m',
+      dontHaveAccount: 'Ị nwebeghị akaụntụ?',
+      alreadyHaveAccount: 'Ị nwere akaụntụ ugbua?',
+      signInTitle: 'Banye na EbolaGuard NG',
+      signInSubtitle: 'Banye iji lelee akụkọ ahụike gị na ijikwa ọkwa ntiwapụ ọrịa.',
+      signUpTitle: 'Mepụta Akaụntụ EbolaGuard',
+      signUpSubtitle: 'Sonyere ọtụtụ puku ndị Naịjirịa na-echebe onwe ha site na ozi ahụike dị mma.',
+      forgotTitle: 'Weghachite Okwuntughe Gị',
+      forgotSubtitle: 'Tinye ozi-e gị iji nweta njikọ mweghachi.',
+      resetPasswordBtn: 'Ziga Ozi-e Ntọgharị Okwuntughe',
+      backToSignIn: 'Laghachi na Peeji Nbanye',
+      showPassword: 'Gosi okwuntughe',
+      hidePassword: 'Zobe okwuntughe',
+      passwordRequirements: 'Okwuntughe ga-eru opekata mpe mkpụrụedemede 6.',
+      passwordMatchError: 'Okwuntughe abụọ ahụ adabaghị.',
+      passwordLengthError: 'Okwuntughe ga-eru opekata mpe mkpụrụedemede 6.',
+      emailRequiredError: 'Biko tinye adreesị ozi-e ziri ezi.',
+      nameRequiredError: 'Biko tinye aha gị niile.',
+      registrationSuccess: 'Emepụtara akaụntụ gị nke ọma!',
+      emailConfirmNotice: 'Ọ bụrụ na Supabase chọrọ nkwenye ozi-e, biko lelee igbe ozi gị tupu ị banye.',
+      resetEmailSent: 'Ezitela njikọ ntọgharị okwuntughe na ozi-e gị!',
+      publicNotice: 'Ntuziaka mberede, ọnụ ọgụgụ ntiwapụ, na ngwa nyocha ihe egwu bụ n\'efu maka onye ọ bụla na-enweghị nbanye.',
+      accountTitle: 'Akaụntụ & Profaịlụ Ahụike',
+      accountSubtitle: 'Jikwaa nkọwa gị, steeti gị na Naịjirịa, na ntọala ọkwa ntiwapụ.',
+      editProfile: 'Dezie Profaịlụ Ahụike',
+      saveChanges: 'Chekwaa Mgbanwe',
+      saving: 'Na-echekwa...',
+      profileUpdated: 'E melitere profaịlụ ahụike gị nke ọma.',
+      phoneLabel: 'Nọmba Ekwentị Mberede',
+      stateLabel: 'Isi Steeti Gị na Naịjirịa',
+      memberSince: 'Onye otu kemgbe',
+      securitySettings: 'Nchekwa & Ọnọdụ Akaụntụ',
+      verifiedAccount: 'Ekwadoro na Supabase',
+      alertPreferences: 'Ọkwa Mberede NCDC',
+      smsAlerts: 'Nweta ozi SMS mberede sitere na NCDC',
+      emailAlerts: 'Nweta akwụkwọ akụkọ ahụike kwa izu',
+      emergencyQuickLinks: 'Omume Ahụike Ngwa Ngwa',
+      viewAssessments: 'Malite Nyocha Ihe Egwu',
+      facilityDirectory: 'Chọta Ụlọ Ọgwụ Dị Nso',
+      outbreakFeed: 'Lelee Ozi Ntiwapụ Ọhụrụ',
+      loginRequiredTitle: 'A Chọrọ Nbanye',
+      loginRequiredDesc: 'Biko banye ma ọ bụ mepụta akaụntụ iji nweta profaịlụ EbolaGuard NG gị.'
     }
   }
 };

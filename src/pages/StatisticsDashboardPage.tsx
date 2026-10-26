@@ -111,16 +111,16 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 max-w-6xl">
 
       {/* Filter controls & CSV Export */}
-      <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-card p-5 rounded-2xl border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500 block mb-1">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
               {t.statistics.geoFilter}
             </label>
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="px-3 py-2 rounded-lg border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white focus:outline-none focus:border-[#18794E]"
+              className="px-3 py-2 rounded-lg border border-input text-xs sm:text-sm text-foreground bg-background focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <option value="All">{t.common.all} (Jurisdictions)</option>
               <option value="Nigeria">Nigeria (36 States & FCT)</option>
@@ -130,13 +130,13 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
           </div>
 
           <div>
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500 block mb-1">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
               {t.statistics.timeframeFilter}
             </label>
             <select
               value={selectedTimeframe}
               onChange={(e) => setSelectedTimeframe(e.target.value)}
-              className="px-3 py-2 rounded-lg border border-gray-200 text-xs sm:text-sm text-gray-700 bg-white focus:outline-none focus:border-[#18794E]"
+              className="px-3 py-2 rounded-lg border border-input text-xs sm:text-sm text-foreground bg-background focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <option value="2026">2026 Current Year (Cumulative)</option>
               <option value="2025">2025 Retrospective Cycle</option>
@@ -146,7 +146,7 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
 
         <button
           onClick={handleDownloadCSV}
-          className="self-start sm:self-end px-4 py-2.5 rounded-lg bg-[#18794E] hover:bg-emerald-800 text-white font-bold text-xs inline-flex items-center gap-2 shadow-sm transition-all"
+          className="self-start sm:self-end px-4 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs inline-flex items-center gap-2 shadow-xs transition-all"
         >
           <Download className="w-4 h-4" />
           <span>{t.statistics.downloadBtn}</span>
@@ -155,94 +155,94 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
 
       {/* Primary KPI Metrics Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-2">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             {t.statistics.activeCasesTitle}
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-extrabold text-[#18794E] font-mono tabular-nums">
+            <span className="text-4xl font-extrabold text-accent font-display tabular-nums">
               0
             </span>
-            <span className="text-xs font-medium text-emerald-700">{t.home.metrics.activeCasesUnit}</span>
+            <span className="text-xs font-medium text-accent">{t.home.metrics.activeCasesUnit}</span>
           </div>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-[11px] text-muted-foreground">
             {t.home.metrics.nationalStatus}
           </p>
-          <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="text-[10px] text-muted-foreground pt-2 border-t border-border flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
             <span>NCDC {t.common.verified}: 23 Oct 2026</span>
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-2">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             {t.statistics.fatalitiesTitle}
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-extrabold text-gray-900 font-mono tabular-nums">
+            <span className="text-4xl font-extrabold text-foreground font-display tabular-nums">
               0
             </span>
-            <span className="text-xs font-medium text-gray-600">{t.home.metrics.fatalitiesUnit}</span>
+            <span className="text-xs font-medium text-muted-foreground">{t.home.metrics.fatalitiesUnit}</span>
           </div>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-[11px] text-muted-foreground">
             CFR: 0.0% ({t.common.zeroCases})
           </p>
-          <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="text-[10px] text-muted-foreground pt-2 border-t border-border flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
             <span>FMOH {t.common.official} Record</span>
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-2">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             {t.statistics.screeningsTitle}
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#0F766E] font-mono tabular-nums">
+            <span className="text-3xl font-extrabold text-primary font-display tabular-nums">
               142,850+
             </span>
-            <span className="text-xs font-medium text-teal-700">{t.home.metrics.portScreenings}</span>
+            <span className="text-xs font-medium text-primary">{t.home.metrics.portScreenings}</span>
           </div>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-[11px] text-muted-foreground">
             Port Health Services at Lagos, Abuja & Kano
           </p>
-          <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="text-[10px] text-muted-foreground pt-2 border-t border-border flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
             <span>{t.home.metrics.borderStatus}</span>
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-2">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             {t.statistics.labsTitle}
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#123D32]">
+            <span className="text-3xl font-extrabold text-foreground font-display">
               4 {t.home.metrics.labsUnit}
             </span>
           </div>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-[11px] text-muted-foreground">
             Lagos, Abuja, Edo, Asaba
           </p>
-          <div className="text-[10px] text-gray-400 pt-2 border-t border-gray-100 flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="text-[10px] text-muted-foreground pt-2 border-t border-border flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-accent" />
             <span>WHO AFRO Bulletin</span>
           </div>
         </div>
       </div>
 
       {/* Chart Section: Monthly Points-of-Entry Screenings */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-6">
+      <section className="bg-card rounded-2xl p-6 sm:p-8 border border-border shadow-xs space-y-6">
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <h2 className="text-xl font-bold text-[#1F2937]">
+            <h2 className="text-xl font-display font-bold text-foreground">
               {t.statistics.trendTitle}
             </h2>
-            <span className="text-xs font-medium text-gray-500">
+            <span className="text-xs font-medium text-muted-foreground">
               Unit: Individuals Screened · {t.common.source}: Port Health Services / NCDC
             </span>
           </div>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             {t.home.metrics.borderStatus}
           </p>
         </div>
@@ -250,12 +250,12 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={historicalTrendData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="period" stroke="#888888" fontSize={12} />
               <YAxis stroke="#888888" fontSize={12} tickFormatter={(val) => `${val / 1000}k`} />
               <Tooltip
                 formatter={(value: unknown) => [typeof value === 'number' ? value.toLocaleString() : String(value ?? 0), 'Screenings']}
-                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }}
+                contentStyle={{ borderRadius: '8px', border: '1px solid #dfe5eb', fontSize: '12px' }}
               />
               <Bar dataKey="screenings" fill="#18794E" radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -264,18 +264,18 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
       </section>
 
       {/* Nigeria 36 States + FCT Surveillance Matrix */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+      <section className="bg-card rounded-2xl p-6 sm:p-8 border border-border shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
           <div>
-            <h2 className="text-xl font-bold text-[#1F2937]">
+            <h2 className="text-xl font-display font-bold text-foreground">
               {t.statistics.stateSurveillanceTitle}
             </h2>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {t.home.stateTableSubtitle}
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-accent bg-accent/10 px-3 py-1.5 rounded-lg border border-accent/20">
+            <ShieldCheck className="w-4 h-4 text-accent" />
             <span>{t.home.metrics.nationalStatus}</span>
           </div>
         </div>
@@ -284,18 +284,18 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
           {NIGERIA_STATES.map((state) => (
             <div
               key={state}
-              className="p-3 rounded-xl border border-gray-200/80 hover:border-emerald-500 bg-gray-50/50 transition-colors space-y-1"
+              className="p-3 rounded-xl border border-border hover:border-primary/40 bg-secondary/30 transition-colors space-y-1"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-800 truncate">
+                <span className="text-xs font-bold text-foreground truncate">
                   {state}
                 </span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500" title={t.common.zeroCases} />
+                <span className="w-2 h-2 rounded-full bg-accent" title={t.common.zeroCases} />
               </div>
-              <p className="text-[11px] text-gray-500 font-mono">
+              <p className="text-[11px] text-muted-foreground font-mono">
                 {t.home.metrics.activeCases}: 0
               </p>
-              <p className="text-[10px] text-emerald-700 font-medium">
+              <p className="text-[10px] text-accent font-medium">
                 {t.common.verified}
               </p>
             </div>
@@ -304,9 +304,9 @@ export const StatisticsDashboardPage: React.FC<StatisticsDashboardPageProps> = (
       </section>
 
       {/* Data Methodology & Public Health Limitations Notice */}
-      <div className="p-6 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-gray-600 space-y-3">
-        <div className="flex items-center gap-2 font-bold text-gray-800 text-sm">
-          <AlertCircle className="w-4 h-4 text-gray-500" />
+      <div className="p-6 rounded-2xl bg-secondary/50 border border-border text-xs text-muted-foreground space-y-3">
+        <div className="flex items-center gap-2 font-bold text-foreground text-sm font-display">
+          <AlertCircle className="w-4 h-4 text-primary" />
           <span>Surveillance Methodology & Analytical Limitations</span>
         </div>
         <p className="leading-relaxed">

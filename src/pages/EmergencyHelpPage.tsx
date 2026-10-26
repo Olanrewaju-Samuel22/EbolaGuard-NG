@@ -69,31 +69,31 @@ export const EmergencyHelpPage: React.FC<EmergencyHelpPageProps> = ({ onSelectTa
       </div>
 
       {/* MANDATORY CALL-AHEAD PROTOCOL */}
-      <div className="bg-white rounded-2xl p-6 sm:p-8 border-2 border-red-200 shadow-sm space-y-4">
+      <div className="bg-card rounded-2xl p-6 sm:p-8 border border-destructive/30 shadow-xs space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
             <AlertTriangle className="w-5 h-5" />
           </div>
-          <h3 className="text-lg font-bold text-[#1F2937]">
+          <h3 className="text-lg font-display font-bold text-foreground">
             {e.callAheadTitle}
           </h3>
         </div>
 
-        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
           {e.callAheadWarning}
         </p>
 
-        <div className="space-y-3 pt-2 text-xs text-gray-700">
+        <div className="space-y-3 pt-2 text-xs text-foreground">
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
             <span>{e.step1}</span>
           </div>
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
             <span>{e.step2}</span>
           </div>
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
             <span>{e.step3}</span>
           </div>
         </div>
@@ -101,45 +101,45 @@ export const EmergencyHelpPage: React.FC<EmergencyHelpPageProps> = ({ onSelectTa
 
       {/* Other National Emergency Numbers */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             {t.common.emergency}
           </span>
-          <h4 className="text-base font-bold text-[#1F2937]">{e.nemaTitle}</h4>
-          <p className="text-xs text-gray-600">{e.nemaDesc}</p>
+          <h4 className="text-base font-display font-bold text-foreground">{e.nemaTitle}</h4>
+          <p className="text-xs text-muted-foreground">{e.nemaDesc}</p>
           <a
             href="tel:112"
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#18794E] hover:underline pt-2 font-mono"
+            className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline pt-2 font-mono"
           >
             <PhoneCall className="w-4 h-4" />
             <span>{e.nemaBtn}</span>
           </a>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             Lagos State
           </span>
-          <h4 className="text-base font-bold text-[#1F2937]">{e.lagosTitle}</h4>
-          <p className="text-xs text-gray-600">{e.lagosDesc}</p>
+          <h4 className="text-base font-display font-bold text-foreground">{e.lagosTitle}</h4>
+          <p className="text-xs text-muted-foreground">{e.lagosDesc}</p>
           <a
             href="tel:0800052467432584"
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#18794E] hover:underline pt-2 font-mono"
+            className="inline-flex items-center gap-2 text-xs font-bold text-primary hover:underline pt-2 font-mono"
           >
             <PhoneCall className="w-4 h-4" />
             <span>08000LAGOSHEALTH</span>
           </a>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             Red Cross
           </span>
-          <h4 className="text-base font-bold text-[#1F2937]">{e.redCrossTitle}</h4>
-          <p className="text-xs text-gray-600">{e.redCrossDesc}</p>
+          <h4 className="text-base font-display font-bold text-foreground">{e.redCrossTitle}</h4>
+          <p className="text-xs text-muted-foreground">{e.redCrossDesc}</p>
           <button
             onClick={() => onSelectTab('find-help')}
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#0F766E] hover:underline pt-2"
+            className="inline-flex items-center gap-2 text-xs font-bold text-accent hover:underline pt-2"
           >
             <Building2 className="w-4 h-4" />
             <span>{e.viewDirectoryBtn}</span>

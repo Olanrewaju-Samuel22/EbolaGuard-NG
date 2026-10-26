@@ -2,48 +2,61 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
   --color-background: hsl(210 25% 99%);
   --color-foreground: hsl(210 30% 12%);
   --color-card: hsl(0 0% 100%);
   --color-card-foreground: hsl(210 30% 12%);
-  --color-primary: hsl(158 55% 36%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(210 30% 12%);
+  --color-primary: hsl(154 67% 28%);
   --color-primary-foreground: hsl(0 0% 100%);
-  --color-secondary: hsl(210 20% 96%);
-  --color-secondary-foreground: hsl(210 25% 20%);
-  --color-muted: hsl(210 15% 95%);
-  --color-muted-foreground: hsl(210 15% 42%);
-  --color-accent: hsl(158 55% 40%);
+  --color-secondary: hsl(150 20% 96%);
+  --color-secondary-foreground: hsl(154 30% 15%);
+  --color-muted: hsl(150 15% 95%);
+  --color-muted-foreground: hsl(154 15% 38%);
+  --color-accent: hsl(154 65% 42%);
   --color-accent-foreground: hsl(0 0% 100%);
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(0 0% 100%);
   --color-destructive: hsl(0 72% 51%);
   --color-destructive-foreground: hsl(0 0% 100%);
-  --color-success: hsl(158 60% 38%);
+  --color-success: hsl(154 67% 30%);
   --color-success-foreground: hsl(0 0% 100%);
-  --color-border: hsl(210 20% 90%);
-  --color-input: hsl(210 20% 90%);
-  --color-ring: hsl(158 55% 36%);
+  --color-border: hsl(150 15% 88%);
+  --color-input: hsl(150 15% 88%);
+  --color-ring: hsl(154 67% 28%);
 }
 
 :root {
-  --background: 210 25% 99%;
-  --foreground: 210 30% 12%;
+  --background: 150 25% 99%;
+  --foreground: 154 35% 12%;
   --card: 0 0% 100%;
-  --card-foreground: 210 30% 12%;
-  --primary: 158 55% 36%;
+  --card-foreground: 154 35% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 154 35% 12%;
+  --primary: 154 67% 28%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 210 20% 96%;
-  --secondary-foreground: 210 25% 20%;
-  --muted: 210 15% 95%;
-  --muted-foreground: 210 15% 42%;
-  --accent: 158 55% 40%;
+  --secondary: 150 20% 96%;
+  --secondary-foreground: 154 30% 15%;
+  --muted: 150 15% 95%;
+  --muted-foreground: 154 15% 38%;
+  --accent: 154 65% 42%;
   --accent-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
-  --success: 158 60% 38%;
+  --success: 154 67% 30%;
   --success-foreground: 0 0% 100%;
-  --border: 210 20% 90%;
+  --risk-low: 154 65% 36%;
+  --risk-medium: 38 92% 50%;
+  --risk-high: 0 72% 51%;
+  --border: 150 15% 88%;
+  --input: 150 15% 88%;
+  --ring: 154 67% 28%;
   --radius: 0.75rem;
 }
 
@@ -56,11 +69,11 @@ body {
 }
 
 .gradient-hero {
-  background: linear-gradient(160deg, #123D32, #18794E 45%, #0F766E);
+  background: linear-gradient(160deg, #18794E, #13613e 45%, #0e3f2a);
 }
 
 .gradient-accent {
-  background: linear-gradient(135deg, #18794E, #0F766E);
+  background: linear-gradient(135deg, hsl(154, 65%, 42%), hsl(154, 70%, 28%));
 }
 
 @keyframes pulse-slow {

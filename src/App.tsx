@@ -20,8 +20,11 @@ import { ContactFeedbackPage } from './pages/ContactFeedbackPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfUsePage } from './pages/TermsOfUsePage';
 import { AdminPortalPage } from './pages/AdminPortalPage';
+import { AuthPage } from './pages/AuthPage';
+import { AccountPage } from './pages/AccountPage';
 
 import { LanguageProvider, useTranslation } from './contexts/LanguageContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 import {
   HealthArticle,
@@ -321,6 +324,36 @@ function AppContent() {
             onUpdateReports={setMisinformationReports}
           />
         )}
+
+        {currentTab === 'signin' && (
+          <AuthPage
+            initialMode="signin"
+            onNavigateTab={handleSelectTab}
+            onSuccessRedirect={handleSelectTab}
+          />
+        )}
+
+        {currentTab === 'signup' && (
+          <AuthPage
+            initialMode="signup"
+            onNavigateTab={handleSelectTab}
+            onSuccessRedirect={handleSelectTab}
+          />
+        )}
+
+        {currentTab === 'forgot-password' && (
+          <AuthPage
+            initialMode="forgot-password"
+            onNavigateTab={handleSelectTab}
+            onSuccessRedirect={handleSelectTab}
+          />
+        )}
+
+        {currentTab === 'account' && (
+          <AccountPage
+            onNavigateTab={handleSelectTab}
+          />
+        )}
       </main>
 
       {/* Official Footer with Developer Credit */}
@@ -341,7 +374,9 @@ function AppContent() {
 export function App() {
   return (
     <LanguageProvider>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </LanguageProvider>
   );
 }

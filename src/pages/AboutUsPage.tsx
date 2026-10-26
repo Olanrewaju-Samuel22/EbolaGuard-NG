@@ -45,46 +45,46 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = () => {
 
       {/* Mission & Core Pillars */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#18794E] flex items-center justify-center">
+        <div className="p-6 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Shield className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-[#1F2937]">{t.aboutUs.pillar1Title}</h3>
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <h3 className="text-base font-display font-bold text-foreground">{t.aboutUs.pillar1Title}</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             {t.aboutUs.pillar1Desc}
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-50 text-[#0F766E] flex items-center justify-center">
+        <div className="p-6 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center">
             <HeartHandshake className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-[#1F2937]">{t.aboutUs.pillar2Title}</h3>
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <h3 className="text-base font-display font-bold text-foreground">{t.aboutUs.pillar2Title}</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             {t.aboutUs.pillar2Desc}
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#123D32] flex items-center justify-center">
+        <div className="p-6 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
             <Award className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-bold text-[#1F2937]">{t.aboutUs.pillar3Title}</h3>
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <h3 className="text-base font-display font-bold text-foreground">{t.aboutUs.pillar3Title}</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             {t.aboutUs.pillar3Desc}
           </p>
         </div>
       </div>
 
       {/* Verification Methodology */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-sm space-y-4">
-        <h3 className="text-lg font-bold text-[#1F2937]">
+      <section className="bg-card rounded-2xl p-6 sm:p-8 border border-border shadow-xs space-y-4">
+        <h3 className="text-lg font-display font-bold text-foreground">
           Scientific & Epidemiological Methodology
         </h3>
-        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
           EbolaGuard NG follows strict editorial and clinical governance rules:
         </p>
-        <ul className="space-y-2 text-xs text-gray-700 leading-relaxed list-disc list-inside">
+        <ul className="space-y-2 text-xs text-foreground/80 leading-relaxed list-disc list-inside">
           <li><strong>No Simulated Outbreaks:</strong> We never invent case numbers, death tolls, or quarantine statuses. If verified data for a jurisdiction is unavailable, we explicitly indicate it as unverified.</li>
           <li><strong>Species Distinction:</strong> We distinguish between the 6 distinct ebolavirus species, clarifying that vaccines like Ervebo only target the Zaire species.</li>
           <li><strong>Clinical Boundary:</strong> The AI Virtual Doctor operates under strict guardrails; it provides triage levels and emergency call-ahead protocols without claiming to be a human physician.</li>
@@ -92,8 +92,8 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = () => {
       </section>
 
       {/* Official Health Agency Links */}
-      <div className="p-6 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
-        <h3 className="text-sm font-bold text-[#1F2937]">
+      <div className="p-6 rounded-2xl bg-secondary/50 border border-border space-y-4">
+        <h3 className="text-sm font-display font-bold text-foreground">
           Official Public Health Agencies
         </h3>
         <div className="flex flex-wrap gap-4 text-xs">
@@ -101,7 +101,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = () => {
             href="https://ncdc.gov.ng"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#18794E] hover:underline font-semibold inline-flex items-center gap-1"
+            className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
           >
             <span>NCDC Nigeria</span>
             <ExternalLink className="w-3 h-3" />
@@ -111,7 +111,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = () => {
             href="https://health.gov.ng"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#18794E] hover:underline font-semibold inline-flex items-center gap-1"
+            className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
           >
             <span>Federal Ministry of Health</span>
             <ExternalLink className="w-3 h-3" />
@@ -121,7 +121,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = () => {
             href="https://www.afro.who.int"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#18794E] hover:underline font-semibold inline-flex items-center gap-1"
+            className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
           >
             <span>WHO AFRO</span>
             <ExternalLink className="w-3 h-3" />
@@ -131,7 +131,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = () => {
             href="https://africacdc.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#18794E] hover:underline font-semibold inline-flex items-center gap-1"
+            className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
           >
             <span>Africa CDC</span>
             <ExternalLink className="w-3 h-3" />

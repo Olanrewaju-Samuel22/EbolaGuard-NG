@@ -4,7 +4,21 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 
-dotenv.config();
+// 1. Sanitize environment: Ensure NO secret keys leak into client-facing VITE_ environment variables
+if (process.env.VITE_SUPABASE_ANON_KEY?.startsWith('sb_secret_') || process.env.VITE_SUPABASE_ANON_KEY?.includes('service_role')) {
+  if (!process.env.SUPABASE_SECRET_KEY) {
+    process.env.SUPABASE_SECRET_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+  }
+  delete process.env.VITE_SUPABASE_ANON_KEY;
+}
+
+// 2. Load .env with override so client-facing VITE_SUPABASE_ANON_KEY receives the publishable key
+dotenv.config({ override: true });
+
+// 3. Final verification: If VITE_SUPABASE_ANON_KEY still has a secret key, delete it
+if (process.env.VITE_SUPABASE_ANON_KEY?.startsWith('sb_secret_')) {
+  delete process.env.VITE_SUPABASE_ANON_KEY;
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,17 +41,27 @@ if (apiKey) {
 }
 
 // System instructions for Health Assistant
-const HEALTH_ASSISTANT_SYSTEM_PROMPT = `You are the EbolaGuard NG AI Health Education Assistant, built for Nigerian public health awareness.
-Your mission: Provide calm, verified, plain-language health information on Ebola Virus Disease (EVD) grounded strictly in official protocols from the Nigeria Centre for Disease Control (NCDC), the World Health Organization (WHO), and the Federal Ministry of Health and Social Welfare (Nigeria).
+const HEALTH_ASSISTANT_SYSTEM_PROMPT = `You are the EbolaGuard NG Virtual Health Assistant. You provide clear, friendly, responsible public health information, especially about Ebola prevention, symptoms, transmission, and when to seek medical care.
 
-STRICT SAFETY RULES:
-1. NEVER diagnose the user with Ebola or any disease.
-2. NEVER prescribe prescription medication, dosage instructions, or recommend experimental or folk remedies (strictly debunk saltwater drinking/baths, bleach, and unapproved concoctions).
-3. NEVER claim a user is definitely infected or safe.
-4. ALWAYS explain that early symptoms (fever, body pain, headache) mimic malaria and other common tropical fevers, and laboratory testing (RT-PCR) is required for diagnosis.
-5. Emphasize that Nigeria currently has zero active Ebola transmission and surveillance at borders is proactive.
-6. For suspected exposure or severe illness, instruct the user to call the NCDC Toll-Free Emergency Hotline at 6232.
-7. Always provide a calm, respectful tone and brief source attribution (e.g. "Source: NCDC / WHO Guidelines").`;
+Understand the user's actual message before responding.
+
+For greetings such as hey, hi, hello, or good morning, respond with a short, friendly greeting and ask how you can help. Do not immediately provide an Ebola information report.
+
+For simple questions, answer directly and concisely. Provide more detail when the user requests it.
+
+Use simple language and explain medical terms when necessary.
+
+Respond in the language selected in the EbolaGuard NG interface. Support English, Nigerian Pidgin, Yoruba, Hausa, and Igbo.
+
+Never claim to diagnose or rule out Ebola. Do not replace a licensed healthcare professional.
+
+Never invent current outbreak statistics, confirmed case counts, emergency numbers, official announcements, or medical sources. For current information, use verified official sources and clearly state when information cannot be verified.
+
+If a user reports possible Ebola exposure and compatible symptoms, advise prompt contact with a healthcare provider or public health authority. Tell them to call ahead before visiting a healthcare facility.
+
+Do not frighten users unnecessarily. Be calm, respectful, accurate, and helpful.
+
+Keep greetings and simple conversational replies short. Give detailed medical explanations only when the user's question calls for them.`;
 
 // System instructions for Virtual Doctor
 const VIRTUAL_DOCTOR_SYSTEM_PROMPT = `You are the EbolaGuard Virtual Doctor, an AI health triage assistant designed for people who have difficulty accessing healthcare facilities in Nigeria.
@@ -77,29 +101,50 @@ app.post('/api/health-assistant', async (req: Request, res: Response) => {
     };
     const targetLangName = languageNames[language] || 'English';
 
-    const prompt = `TARGET LANGUAGE: ${targetLangName} (Language code: "${language}").
-IMPORTANT: You MUST write your entire response strictly in ${targetLangName}. Do not respond in English unless the requested language is 'en'.
+    const isGreetingOrCasual = /^(hey|hi|hello|good\s*(morning|afternoon|evening)|howdy|what'?s\s*up|yo|how\s*are\s*you|how\s*far|sannu|ina\s*kwana|bawo|e\s*nle|kedu|ndewo|thanks|thank\s*you)[\s!?.👋]*$/i.test(sanitized.trim());
 
-User Question: "${sanitized}". Provide a clear, supportive public health response following your guidelines.`;
+    const prompt = `Requested Output Language: ${targetLangName} (Language code: "${language}").
+Respond in ${targetLangName}.
+
+User Message: "${sanitized}"`;
+
     const response = await genAI.models.generateContent({
       model: 'gemini-3.8-flash',
       contents: prompt,
       config: {
         systemInstruction: HEALTH_ASSISTANT_SYSTEM_PROMPT,
-        temperature: 0.2,
-        maxOutputTokens: 800
+        temperature: 0.3
       }
     });
 
     const text = response.text || 'Unable to generate response.';
+
+    // Attach official public health sources only if medical/epidemiological advice is given, not for simple greetings
+    const isMedicalQuery = !isGreetingOrCasual && (
+      sanitized.toLowerCase().includes('ebola') ||
+      sanitized.toLowerCase().includes('symptom') ||
+      sanitized.toLowerCase().includes('prevent') ||
+      sanitized.toLowerCase().includes('cure') ||
+      sanitized.toLowerCase().includes('treatment') ||
+      sanitized.toLowerCase().includes('vaccine') ||
+      sanitized.toLowerCase().includes('outbreak') ||
+      sanitized.toLowerCase().includes('fever') ||
+      sanitized.toLowerCase().includes('expose') ||
+      sanitized.toLowerCase().includes('contact')
+    );
+
     return res.json({
       answer: text,
-      sources: [
-        'https://ncdc.gov.ng',
-        'https://www.who.int/health-topics/ebola',
-        'https://africacdc.org'
-      ],
-      disclaimer: 'EbolaGuard NG provides verified public health education. It does not replace a licensed clinical medical doctor.'
+      sources: isMedicalQuery
+        ? [
+            'https://ncdc.gov.ng',
+            'https://www.who.int/health-topics/ebola',
+            'https://africacdc.org'
+          ]
+        : [],
+      disclaimer: isMedicalQuery
+        ? 'EbolaGuard NG provides verified public health education. It does not replace a licensed clinical medical doctor.'
+        : undefined
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown AI error';
@@ -167,7 +212,16 @@ Analyze this clinical presentation and return a JSON object with:
       }
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    let rawText = response.text || '{}';
+    if (rawText.includes('```json')) {
+      rawText = rawText.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+    } else if (rawText.includes('```')) {
+      rawText = rawText.replace(/```\s*/g, '');
+    }
+    const parsed = JSON.parse(rawText.trim());
+    if (!parsed.level || !parsed.summary) {
+      throw new Error('Incomplete triage payload from model');
+    }
     return res.json(parsed);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown AI error';

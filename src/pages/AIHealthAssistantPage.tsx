@@ -12,6 +12,7 @@ import {
 import { SupportedLanguage } from '../types';
 import { askHealthAssistant, HealthAssistantResponse } from '../lib/ai-service';
 import { useTranslation } from '../contexts/LanguageContext';
+import { FormattedMessage } from '../components/FormattedMessage';
 
 interface Message {
   sender: 'user' | 'assistant';
@@ -164,13 +165,17 @@ export const AIHealthAssistantPage: React.FC<AIHealthAssistantPageProps> = ({
                 className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed whitespace-pre-line ${
+                  className={`max-w-[85%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-primary text-primary-foreground rounded-br-none'
+                      ? 'bg-primary text-primary-foreground rounded-br-none whitespace-pre-wrap break-words'
                       : 'bg-secondary/60 text-foreground border border-border rounded-bl-none shadow-2xs'
                   }`}
                 >
-                  {m.text}
+                  {m.sender === 'user' ? (
+                    <div className="break-words">{m.text}</div>
+                  ) : (
+                    <FormattedMessage content={m.text} />
+                  )}
 
                   {m.sources && m.sources.length > 0 && (
                     <div className="mt-3 pt-2.5 border-t border-border/40 text-[11px] text-muted-foreground space-y-1">

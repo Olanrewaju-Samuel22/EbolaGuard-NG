@@ -266,6 +266,18 @@ ALTER TABLE public.system_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.virtual_consultation_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.virtual_consultation_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.virtual_doctor_feedback ENABLE ROW LEVEL SECURITY;
+-- User profile & role access policies
+CREATE POLICY "Users can view own profile" ON public.profiles
+  FOR SELECT TO authenticated USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile" ON public.profiles
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" ON public.profiles
+  FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Users can view own roles" ON public.user_roles
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
 -- Public read policies for verified content
 CREATE POLICY "Public can view published verified articles" ON public.health_articles
